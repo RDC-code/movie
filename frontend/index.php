@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     body {
       background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1607082349560-18f3b0948b2b') no-repeat center center fixed;
@@ -119,16 +120,31 @@
 
         const data = await response.json();
         if (response.ok) {
-          alert('Registration successful!');
+          Swal.fire({
+            icon: 'success',
+            title: 'Registration Successful!',
+            text: 'You can now log in.',
+            confirmButtonColor: '#d33'
+          });
           document.getElementById('toggleLogin').checked = true;
           registerForm.classList.add('d-none');
           loginForm.classList.remove('d-none');
         } else {
-          alert(data.message || 'Registration failed.');
+          Swal.fire({
+            icon: 'error',
+            title: 'Registration Failed',
+            text: data.message || 'Please try again.',
+            confirmButtonColor: '#d33'
+          });
         }
       } catch (error) {
-        alert('Something went wrong during registration.');
         console.error(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Something went wrong during registration.',
+          confirmButtonColor: '#d33'
+        });
       }
     });
 
@@ -149,22 +165,37 @@
 
         const data = await response.json();
         if (response.ok) {
-          alert('Login successful!');
-          localStorage.setItem('auth_token', data.token);
-
-          if (data.user.role === 0) {
-            window.location.href = 'admin-dashboard.php';
-          } else if (data.user.role === 1) {
-            window.location.href = 'manager-dashboard.php';
-          } else if (data.user.role === 2) {
-            window.location.href = 'user-dashboard.php';
-          }
+          Swal.fire({
+            icon: 'success',
+            title: 'Login Successful!',
+            timer: 1500,
+            showConfirmButton: false
+          }).then(() => {
+            localStorage.setItem('auth_token', data.token);
+            if (data.user.role === 0) {
+              window.location.href = 'admin-dashboard.php';
+            } else if (data.user.role === 1) {
+              window.location.href = 'manager-dashboard.php';
+            } else if (data.user.role === 2) {
+              window.location.href = 'user-dashboard.php';
+            }
+          });
         } else {
-          alert(data.message || 'Login failed.');
+          Swal.fire({
+            icon: 'error',
+            title: 'Login Failed',
+            text: data.message || 'Invalid email or password.',
+            confirmButtonColor: '#d33'
+          });
         }
       } catch (error) {
-        alert('Something went wrong during login.');
         console.error(error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Something went wrong during login.',
+          confirmButtonColor: '#d33'
+        });
       }
     });
   </script>

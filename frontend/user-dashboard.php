@@ -8,14 +8,14 @@
 <body class="bg-dark text-white">
   <div class="container mt-5">
     <h2>Welcome, User!</h2>
-    <p>This is your personal dashboard where you can browse movies, write reviews, and manage your profile.</p>
+    <p>dashboard where you can browse movies, write reviews, and manage your profile.</p>
     <button class="btn btn-danger" onclick="logout()">Logout</button>
   </div>
 
   <script>
     function logout() {
       localStorage.removeItem('auth_token');
-      window.location.href = 'MovieSite/frontend/index.php';
+      window.location.href = 'index.php';
     }
   </script>
 </body>

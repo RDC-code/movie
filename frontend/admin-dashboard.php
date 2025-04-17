@@ -15,7 +15,7 @@
   <script>
     function logout() {
       localStorage.removeItem('auth_token');
-      window.location.href = '/';
+      window.location.href = 'index.php';
     }
   </script>
 </body>
