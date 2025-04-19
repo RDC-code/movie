@@ -105,7 +105,7 @@
       const password = document.getElementById('regPassword').value;
 
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/register', {
+        const response = await fetch('https://backendcalape.rcalape.online/api/register', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -154,8 +154,10 @@
       const email = document.getElementById('loginEmail').value;
       const password = document.getElementById('loginPassword').value;
 
+
+      //https://backendcalape.rcalape.online//api/login
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/login', {
+        const response = await fetch('https://backendcalape.rcalape.online/api/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -173,7 +175,7 @@
           }).then(() => {
             localStorage.setItem('auth_token', data.token);
             if (data.user.role === 0) {
-              window.location.href = 'admin-dashboard.php';
+              window.location.href = 'admin/admin-dashboard.php';
             } else if (data.user.role === 1) {
               window.location.href = 'manager-dashboard.php';
             } else if (data.user.role === 2) {
