@@ -5,6 +5,30 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\MovieController;
+
+
+
+
+
+Route::get('/movies', [MovieController::class, 'index']);
+Route::post('/movies', [MovieController::class, 'store']);
+
+
+
+
+
+    Route::get('/movies', [MovieController::class, 'index']);
+    Route::get('/profile', [UserController::class, 'profile']);
+
+
+
+
+
+
+
+
+
 
 
 

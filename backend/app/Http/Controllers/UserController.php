@@ -2,17 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    public function index(){
-        $user = auth::user();
-        return response()->json([
-            'message'=>'user dashboard',
-            'user'=>$user,
-        ]);
+    public function profile(Request $request)
+    {
+        $user = $request->user();
 
+        return response()->json([
+            'name' => $user->name,
+            'email' => $user->email,
+            'role' => $user->role,
+        ]);
     }
+
+
+
+    
 }
+
+?>
