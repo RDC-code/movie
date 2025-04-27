@@ -6,6 +6,7 @@
   <title>User Dashboard - Movie Management System</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -104,8 +105,8 @@
 
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark px-3">
-  <a class="navbar-brand" href="#">🎬 RDC's Movie Site</a>
-  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMovie" aria-controls="navbarMovie" aria-expanded="false" aria-label="Toggle navigation">
+  <a class="navbar-brand" href="#">RDC's Movie Site</a>
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMovie">
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse justify-content-end" id="navbarMovie">
@@ -130,7 +131,7 @@
     <!-- Sidebar -->
     <div class="col-md-3 sidebar">
       <div class="list-group">
-        <a href="#" class="list-group-item list-group-item-action active" id="browseMoviesLink">🎥 Browse Movies</a>
+        <a href="#" class="list-group-item list-group-item-action active" id="browseMoviesLink">Browse Movies</a>
       </div>
     </div>
 
@@ -139,38 +140,15 @@
       <!-- Browse Movies Section -->
       <div id="browseMoviesSection">
         <h4 class="section-title">Now Streaming</h4>
-        <div class="row g-4">
-          <div class="col-md-4">
-            <div class="card">
-              <img src="https://via.placeholder.com/300x400?text=The+Matrix" class="movie-thumbnail" alt="Matrix">
-              <div class="card-body">
-                <h5 class="card-title">The Matrix</h5>
-                <p class="card-text">Director: Wachowski</p>
-                <p class="card-text">Year: 1999</p>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="card">
-              <img src="https://via.placeholder.com/300x400?text=Inception" class="movie-thumbnail" alt="Inception">
-              <div class="card-body">
-                <h5 class="card-title">Inception</h5>
-                <p class="card-text">Director: Christopher Nolan</p>
-                <p class="card-text">Year: 2010</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <div class="row g-4" id="movieList"></div>
       </div>
 
       <!-- My Profile Section -->
       <div id="myProfileSection" style="display: none;">
         <h4 class="section-title">My Profile</h4>
         <div class="card">
-          <div class="card-body">
-            <p><strong>Name:</strong> John Doe</p>
-            <p><strong>Email:</strong> john@example.com</p>
-            <p><strong>Role:</strong> <span class="badge bg-secondary">User</span></p>
+          <div class="card-body" id="profileContent">
+            <!-- Filled by JS -->
           </div>
         </div>
       </div>
@@ -183,14 +161,11 @@
 <script>
   const browseMoviesSection = document.getElementById("browseMoviesSection");
   const myProfileSection = document.getElementById("myProfileSection");
-
   const sidebarLinks = document.querySelectorAll(".list-group-item");
 
   function setActiveLink(activeLink) {
     sidebarLinks.forEach(link => link.classList.remove("active"));
-    if (activeLink) {
-      activeLink.classList.add("active");
-    }
+    if (activeLink) activeLink.classList.add("active");
   }
 
   document.getElementById("browseMoviesLink").addEventListener("click", function (e) {
@@ -198,6 +173,7 @@
     setActiveLink(this);
     browseMoviesSection.style.display = "block";
     myProfileSection.style.display = "none";
+    fetchMovies();
   });
 
   document.getElementById("myProfileNav").addEventListener("click", function (e) {
@@ -205,12 +181,53 @@
     setActiveLink(null);
     browseMoviesSection.style.display = "none";
     myProfileSection.style.display = "block";
+    fetchProfile();
   });
 
   document.getElementById("logoutBtn").addEventListener("click", function () {
-    window.location.href = "index.php"; // Redirect on logout
+    window.location.href = "index.php";
+  });
+
+  function fetchMovies() {
+    fetch("http://127.0.0.1:8000/api/movies")
+      .then(res => res.json())
+      .then(data => {
+        const movieList = document.getElementById("movieList");
+        movieList.innerHTML = "";
+        data.forEach(movie => {
+          movieList.innerHTML += `
+            <div class="col-md-4">
+              <div class="card">
+                <img src="http://127.0.0.1:8000/storage/${movie.thumbnail}" class="movie-thumbnail" alt="${movie.title}">
+                <div class="card-body">
+                  <h5 class="card-title">${movie.title}</h5>
+                  <p class="card-text">Description: ${movie.description}</p>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+      })
+      .catch(err => console.error("Error fetching movies:", err));
+  }
+
+  function fetchProfile() {
+    fetch("http://127.0.0.1:8000/api/profile")
+      .then(res => res.json())
+      .then(data => {
+        const profile = `
+          <p><strong>Username:</strong> ${data.username}</p>
+          <p><strong>Email:</strong> ${data.email}</p>
+          <p><strong>Role:</strong> ${data.role}</p>
+        `;
+        document.getElementById("profileContent").innerHTML = profile;
+      })
+      .catch(err => console.error("Error fetching profile:", err));
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    fetchMovies(); // Load movies by default
   });
 </script>
-
 </body>
 </html>

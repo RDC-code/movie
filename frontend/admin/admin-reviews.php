@@ -6,7 +6,72 @@
   <title>Movie Reviews</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="admin-style.css">
+  <style>
+    body {
+      background-color: #121212;
+      color: #ffffff;
+      margin: 0;
+      padding: 0;
+    }
+    .navbar {
+      background-color: #1f1f1f;
+    }
+    .navbar-brand {
+      font-weight: bold;
+      color: #ffffff;
+    }
+    .navbar-nav .nav-link {
+      color: #ffffff;
+    }
+    .navbar-nav .nav-link:hover {
+      color: #d1d1d1;
+    }
+    .sidebar {
+      background-color: #1f1f1f;
+      padding-top: 20px;
+      min-height: 100vh;
+    }
+    .list-group-item {
+      background-color: transparent;
+      color: #ccc;
+      border: none;
+    }
+    .list-group-item.active,
+    .list-group-item:hover {
+      background-color: #333333;
+      color: #ffffff;
+    }
+    .main-content {
+      background-color: #121212;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .section-title {
+      color: #ffffff;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    .card {
+      background-color: #1e1e1e;
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+    .card-title {
+      color: #fff;
+      font-size: 1.2rem;
+    }
+    .card-text {
+      color: #ccc;
+    }
+    .btn-danger {
+      background-color: #e74c3c;
+      border: none;
+    }
+    .btn-danger:hover {
+      background-color: #c0392b;
+    }
+  </style>
 </head>
 <body>
 
