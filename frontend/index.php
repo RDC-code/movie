@@ -105,7 +105,7 @@
       const password = document.getElementById('regPassword').value;
 
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/register', {
+        const response = await fetch('https://backendcalape.rcalape.online//api/register', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -157,7 +157,7 @@
 
       //https://backendcalape.rcalape.online//api/login
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/login', {
+        const response = await fetch('https://backendcalape.rcalape.online//api/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
