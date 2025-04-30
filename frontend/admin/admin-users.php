@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="csrf-token" content="{{ csrf_token() }}"> <!-- CSRF Token -->
-  <title>Admin Dashboard - Movie Management System</title>
+  <title>Admin - Manage Users</title>
 
-  <!-- Bootstrap CSS -->
+  <!-- Bootstrap + FontAwesome -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- FontAwesome Icons -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <style>
     body {
@@ -17,76 +18,38 @@
       color: #ffffff;
       margin: 0;
       padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
     .navbar {
       background-color: #1f1f1f;
     }
-    .navbar-brand {
-      font-weight: bold;
-      color: #ffffff;
-    }
-    .navbar-nav .nav-link {
-      color: #ffffff;
-    }
     .sidebar {
       background-color: #1f1f1f;
       min-height: 100vh;
+      padding-top: 20px;
       position: fixed;
       top: 0;
       left: 0;
       width: 250px;
-      padding-top: 20px;
-      z-index: 1000;
     }
-    .sidebar .list-group-item {
+    .list-group-item {
       background-color: transparent;
       color: #ccc;
       border: none;
     }
-    .sidebar .list-group-item.active,
-    .sidebar .list-group-item:hover {
+    .list-group-item.active,
+    .list-group-item:hover {
       background-color: #333333;
       color: #ffffff;
     }
     .main-content {
       margin-left: 250px;
-      background-color: #121212;
-      min-height: 100vh;
-      color: #ffffff;
       padding: 20px;
-    }
-    h2 {
-      font-weight: bold;
-    }
-    .btn-primary {
-      background-color: #007bff;
-      border-color: #007bff;
-    }
-    .btn-primary:hover {
-      background-color: #0056b3;
-      border-color: #004085;
     }
     .modal-content {
-      background-color: #1f1f1f;
-      color: #ffffff;
-    }
-    .modal-header {
-      border-bottom: 1px solid #444;
-    }
-    .table-dark {
-      background-color: #2d2d2d;
-    }
-    .table-dark td,
-    .table-dark th {
-      border: 1px solid #444;
-    }
-    .card {
-      border: none;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    }
-    .content {
-      padding: 20px;
+      background-color: #2c2c2c;
     }
   </style>
 </head>
@@ -98,197 +61,204 @@
     <div class="collapse navbar-collapse justify-content-end">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link" href="javascript:void(0);" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+          <a class="nav-link" href="/MovieSite/frontend/index.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </li>
       </ul>
     </div>
   </div>
 </nav>
 
-<!-- Dashboard Content -->
-<div class="container-fluid mt-4">
-  <div class="row">
-    <!-- Sidebar -->
-    <div class="col-md-3 p-0 sidebar">
-      <div class="d-flex flex-column p-3">
-        <h4 class="text-center text-white mb-4">Admin Menu</h4>
-        <div class="list-group">
-          <a href="admin-dashboard.php" class="list-group-item list-group-item-action"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a>
-          <a href="admin-movies.php" class="list-group-item list-group-item-action"><i class="fas fa-film me-2"></i> Manage Movies</a>
-          <a href="admin-users.php" class="list-group-item list-group-item-action active"><i class="fas fa-users me-2"></i> Manage Users</a>
-          <a href="admin-reviews.php" class="list-group-item list-group-item-action"><i class="fas fa-comments me-2"></i> Movie Reviews</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Main Content -->
-    <div class="col-md-9 main-content">
-      <h2>Manage Users</h2>
-      <p>Please note that the role if 0 is admin, 1 is manager, 2 is user</p>
-      <button class="btn btn-primary mb-3" onclick="openAddModal()">Add User</button>
-      <table class="table table-bordered table-dark table-striped" id="userTable">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
+<!-- Sidebar -->
+<div class="sidebar d-flex flex-column">
+  <h4 class="text-center text-white">Admin Menu</h4>
+  <div class="list-group">
+    <a href="admin-dashboard.php" class="list-group-item list-group-item-action">
+      <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+    </a>
+    <a href="admin-movies.php" class="list-group-item list-group-item-action">
+      <i class="fas fa-film me-2"></i> Manage Movies
+    </a>
+    <a href="admin-users.php" class="list-group-item list-group-item-action active">
+      <i class="fas fa-users me-2"></i> Manage Users
+    </a>
+    <a href="admin-reviews.php" class="list-group-item list-group-item-action">
+      <i class="fas fa-comments me-2"></i> Movie Reviews
+    </a>
   </div>
 </div>
 
-<!-- Modal -->
-<div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
+<!-- Main Content -->
+<div class="main-content">
+  <h2 class="mb-4">Manage Users</h2>
+  <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#userModal" onclick="openAddUserModal()">
+    <i class="fas fa-plus me-1"></i> Add User
+  </button>
+
+  <table class="table table-dark table-hover">
+    <thead>
+      <tr>
+        <th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="userTableBody"></tbody>
+  </table>
+</div>
+
+<!-- User Modal -->
+<div class="modal fade" id="userModal" tabindex="-1">
   <div class="modal-dialog">
-    <form id="userForm">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">User Form</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <input type="hidden" name="userId" id="userId">
+    <div class="modal-content text-white">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitle">Add User</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="userForm">
+          <input type="hidden" id="userId">
           <div class="mb-3">
             <label>Name</label>
-            <input type="text" class="form-control" name="name" id="name" required>
+            <input type="text" class="form-control" id="name" required>
           </div>
           <div class="mb-3">
             <label>Email</label>
-            <input type="email" class="form-control" name="email" id="email" required>
+            <input type="email" class="form-control" id="email" required>
           </div>
-          <div class="mb-3">
-            <label>Password</label>
-            <input type="password" class="form-control" name="password" id="password" required>
+          <div class="mb-3" id="passwordGroup">
+            <label>Password <span id="passwordHint" class="text-warning">(leave blank to keep current password)</span></label>
+            <input type="password" class="form-control" id="password" required>
           </div>
           <div class="mb-3">
             <label>Role</label>
-            <input type="text" class="form-control" name="role" id="role" required>
+            <select class="form-control" id="role">
+              <option value="0">Admin</option>
+              <option value="1">Manager</option>
+              <option value="2">User</option>
+            </select>
           </div>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-primary" id="formSubmitBtn">Add User</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        </div>
+          <button type="submit" class="btn btn-success w-100">Save</button>
+        </form>
       </div>
-    </form>
+    </div>
   </div>
 </div>
 
+<!-- Scripts -->
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-  const tableBody = document.querySelector("#userTable tbody");
-  const form = document.getElementById("userForm");
-  const submitBtn = document.getElementById("formSubmitBtn");
+const apiUrl = 'http://localhost:8000/api/users';
 
-  fetchUsers();
-
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
-    const id = document.getElementById("userId").value;
-    if (id) {
-      updateUser(id);
-    } else {
-      addUser();
-    }
-  });
-
-  function fetchUsers() {
-    fetch("http://127.0.0.1:8000/api/users")
+function fetchUsers() {
+  fetch(apiUrl)
     .then(res => res.json())
     .then(data => {
-      tableBody.innerHTML = "";
-      data.forEach((user, i) => {
-        tableBody.innerHTML += `
+      const tbody = document.getElementById('userTableBody');
+      tbody.innerHTML = '';
+      data.forEach(user => {
+        tbody.innerHTML += `
           <tr>
+            <td>${user.id}</td>
             <td>${user.name}</td>
             <td>${user.email}</td>
-            <td>${user.role}</td>
+            <td>${roleLabel(user.role)}</td>
             <td>
-              <button class="btn btn-warning me-1" onclick="editUser(${user.id}, '${user.name}', '${user.email}', '${user.role}')">Edit</button>
-              <button class="btn btn-danger" onclick="deleteUser(${user.id})">Delete</button>
+              <button class="btn btn-warning btn-sm" onclick='openEditUserModal(${JSON.stringify(user)})'>
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})">
+                <i class="fas fa-trash-alt"></i>
+              </button>
             </td>
-          </tr>`;
+          </tr>` ;
       });
     });
-  }
+}
 
-  function addUser() {
-    const name = document.getElementById("name").value;
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-    const role = document.getElementById("role").value;
+function roleLabel(role) {
+  return ['Admin', 'Manager', 'User'][role] || 'Unknown';
+}
 
-    fetch("http://127.0.0.1:8000/api/users", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ name, email, password, role })
-    })
-    .then(() => {
-      alert("User Added Successfully");
-      form.reset();
-      fetchUsers();
+function openAddUserModal() {
+  document.getElementById('modalTitle').textContent = 'Add User';
+  document.getElementById('userForm').reset();
+  document.getElementById('userId').value = '';
+  document.getElementById('passwordGroup').style.display = 'block';
+  document.getElementById('password').required = true; // Make password required in Add User modal
+  document.getElementById('passwordHint').textContent = "(3 maximum password required)"; // Change the hint to "required"
+}
+
+function openEditUserModal(user) {
+  document.getElementById('modalTitle').textContent = 'Edit User';
+  document.getElementById('userId').value = user.id;
+  document.getElementById('name').value = user.name;
+  document.getElementById('email').value = user.email;
+  document.getElementById('role').value = user.role;
+  document.getElementById('password').value = '';
+  document.getElementById('passwordGroup').style.display = 'block';
+  document.getElementById('password').required = false; // Make password optional in Edit User modal
+  document.getElementById('passwordHint').textContent = "(leave blank to keep current password)"; // Restore the original hint
+  new bootstrap.Modal(document.getElementById('userModal')).show();
+}
+
+document.getElementById('userForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const id = document.getElementById('userId').value;
+  const method = id ? 'PUT' : 'POST';
+  const url = id ? `${apiUrl}/${id}` : apiUrl;
+
+  const payload = {
+    name: document.getElementById('name').value,
+    email: document.getElementById('email').value,
+    role: parseInt(document.getElementById('role').value)
+  };
+  const password = document.getElementById('password').value.trim();
+  if (password) payload.password = password;
+
+  fetch(url, {
+    method: method,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(res => res.json())
+  .then(() => {
+    bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
+    fetchUsers();
+    Swal.fire({
+      icon: 'success',
+      title: id ? 'User Updated' : 'User Added',
+      showConfirmButton: false,
+      timer: 1500
     });
-  }
-
-  window.editUser = function(id, name, email, role) {
-    document.getElementById("userId").value = id;
-    document.getElementById("name").value = name;
-    document.getElementById("email").value = email;
-    document.getElementById("role").value = role;
-    document.getElementById("formSubmitBtn").textContent = "Update User";
-    const modal = new bootstrap.Modal(document.getElementById("userModal"));
-    modal.show();
-  };
-
-  function updateUser(id) {
-    const name = document.getElementById("name").value;
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-    const role = document.getElementById("role").value;
-
-    fetch(`http://127.0.0.1:8000/api/users/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ name, email, password, role })
-    })
-    .then(() => {
-      alert("User Updated Successfully");
-      form.reset();
-      fetchUsers();
-    });
-  }
-
-  window.deleteUser = function(id) {
-    if (confirm("Are you sure you want to delete this user?")) {
-      fetch(`http://127.0.0.1:8000/api/users/${id}`, {
-        method: "DELETE"
-      })
-      .then(() => fetchUsers());
-    }
-  };
-
-  window.openAddModal = function() {
-    document.getElementById("formSubmitBtn").textContent = "Add User";
-    form.reset();
-    const modal = new bootstrap.Modal(document.getElementById("userModal"));
-    modal.show();
-  };
-
-  document.getElementById("logoutBtn").addEventListener("click", function() {
-    window.location.href = "index.php";
   });
 });
+
+function deleteUser(id) {
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "You won't be able to revert this!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Yes, delete it!'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      fetch(`${apiUrl}/${id}`, { method: 'DELETE' })
+        .then(() => {
+          fetchUsers();
+          Swal.fire({
+            icon: 'success',
+            title: 'Deleted!',
+            text: 'User has been deleted.',
+            timer: 1500,
+            showConfirmButton: false
+          });
+        });
+    }
+  });
+}
+
+fetchUsers();
 </script>
 
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

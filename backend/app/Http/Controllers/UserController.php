@@ -8,58 +8,71 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    // Fetch all users
+    // Get all users
     public function users()
     {
         return response()->json(User::all());
     }
 
-    // Fetch profile of authenticated user
+    // Store new user
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|string|min:3',
+            'role' => 'required|integer',
+        ]);
+
+        $validated['password'] = Hash::make($validated['password']);
+
+        $user = User::create($validated);
+
+        return response()->json($user, 201);
+    }
+
+    // Show a specific user
+    public function show($id)
+    {
+        return response()->json(User::findOrFail($id));
+    }
+
+    // Update a user
+    public function update(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->role = $request->role;
+    
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+    
+        $user->save();
+    
+        return response()->json(['message' => 'User updated successfully']);
+    }
+    
+
+    // Delete a user
+    public function delete($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return response()->json(['message' => 'User deleted successfully']);
+    }
+
+    // Authenticated user's profile
     public function profile(Request $request)
     {
-        $user = $request->user();
-
-        return response()->json([
-            'name' => $user->name,
-            'email' => $user->email,
-            'role' => $user->role,
-        ]);
+        return response()->json($request->user());
     }
 
-   
-        // Fetch all users
-        public function index()
-        {
-            return User::all();
-        }
-    
-        // Store or update a user
-        public function store(Request $request)
-        {
-            $validated = $request->validate([
-                'name' => 'required|string',
-                'email' => 'required|email|unique:users,email,' . ($request->id ?? ''),
-                'role' => 'required|integer'
-            ]);
-    
-            $user = User::updateOrCreate(
-                ['id' => $request->id],
-                $validated
-            );
-    
-            return response()->json(['success' => true, 'user' => $user]);
-        }
-    
-        // Delete a user
-        public function destroy($id)
-        {
-            $user = User::find($id);
-            if ($user) {
-                $user->delete();
-                return response()->json(['success' => true]);
-            }
-    
-            return response()->json(['success' => false, 'message' => 'User not found']);
-        }
+    // For /userdashboard route
+    public function index()
+    {
+        return response()->json(['message' => 'User Dashboard Accessed']);
     }
-
+}
