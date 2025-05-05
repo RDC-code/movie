@@ -18,29 +18,41 @@
       color: #ffffff;
       margin: 0;
       padding: 0;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
     }
     .navbar {
       background-color: #1f1f1f;
+      padding: 1rem;
+      z-index: 1050;
+      position: sticky;
+      top: 0;
+    }
+    .navbar-brand {
+      font-weight: bold;
+      color: #ffffff;
+    }
+    .navbar-nav .nav-link {
+      color: #ffffff;
+      margin-left: 15px;
+    }
+    .navbar-nav .nav-link:hover {
+      color: #0d6efd;
     }
     .sidebar {
       background-color: #1f1f1f;
       min-height: 100vh;
-      padding-top: 20px;
       position: fixed;
-      top: 0;
+      top: 56px;
       left: 0;
       width: 250px;
+      padding-top: 20px;
     }
-    .list-group-item {
+    .sidebar .list-group-item {
       background-color: transparent;
       color: #ccc;
       border: none;
     }
-    .list-group-item.active,
-    .list-group-item:hover {
+    .sidebar .list-group-item.active,
+    .sidebar .list-group-item:hover {
       background-color: #333333;
       color: #ffffff;
     }
@@ -48,8 +60,44 @@
       margin-left: 250px;
       padding: 20px;
     }
+    h2 {
+      font-weight: bold;
+    }
+    .btn-primary {
+      background-color: #007bff;
+      border-color: #007bff;
+    }
+    .btn-primary:hover {
+      background-color: #0056b3;
+      border-color: #004085;
+    }
     .modal-content {
-      background-color: #2c2c2c;
+      background-color: #1f1f1f;
+      color: #ffffff;
+    }
+    .modal-header {
+      border-bottom: 1px solid #444;
+    }
+    .table-responsive {
+      overflow-x: auto;
+    }
+    table {
+      min-width: 600px;
+    }
+    .table-dark {
+      background-color: #2d2d2d;
+    }
+    .table-dark td,
+    .table-dark th {
+      border: 1px solid #444;
+    }
+    .card {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+    .content {
+      padding: 20px;
     }
   </style>
 </head>
@@ -58,50 +106,65 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container-fluid">
+    <a class="navbar-brand" href="#">Movie Management System</a>
     <div class="collapse navbar-collapse justify-content-end">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link" href="/MovieSite/frontend/index.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
+          <a class="nav-link" href="/MovieSite/frontend/index.php" id="logoutBtn">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </a>
         </li>
       </ul>
     </div>
   </div>
 </nav>
 
-<!-- Sidebar -->
-<div class="sidebar d-flex flex-column">
-  <h4 class="text-center text-white">Admin Menu</h4>
-  <div class="list-group">
-    <a href="admin-dashboard.php" class="list-group-item list-group-item-action">
-      <i class="fas fa-tachometer-alt me-2"></i> Dashboard
-    </a>
-    <a href="admin-movies.php" class="list-group-item list-group-item-action">
-      <i class="fas fa-film me-2"></i> Manage Movies
-    </a>
-    <a href="admin-users.php" class="list-group-item list-group-item-action active">
-      <i class="fas fa-users me-2"></i> Manage Users
-    </a>
-    <a href="admin-reviews.php" class="list-group-item list-group-item-action">
-      <i class="fas fa-comments me-2"></i> Movie Reviews
-    </a>
+<!-- Sidebar + Main Content -->
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar -->
+    <div class="col-md-3 sidebar">
+      <div class="d-flex flex-column p-3">
+        <h4 class="text-center text-white mb-4">Admin Menu</h4>
+        <div class="list-group">
+          <a href="admin-dashboard.php" class="list-group-item list-group-item-action">
+            <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+          </a>
+          <a href="admin-users.php" class="list-group-item list-group-item-action active">
+            <i class="fas fa-users me-2"></i> Manage Users
+          </a>
+          <a href="admin-movies.php" class="list-group-item list-group-item-action">
+            <i class="fas fa-film me-2"></i> Manage Movies
+          </a>
+          <a href="admin-reviews.php" class="list-group-item list-group-item-action">
+            <i class="fas fa-comments me-2"></i> Movie Reviews
+          </a>
+          <a href="admin-reports.php" class="list-group-item list-group-item-action">
+            <i class="fas fa-chart-bar me-2"></i> Reports
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-md-9 main-content">
+      <h2 class="mb-4">Manage Users</h2>
+      <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#userModal" onclick="openAddUserModal()">
+        <i class="fas fa-plus me-1"></i> Add User
+      </button>
+
+      <div class="table-responsive">
+        <table class="table table-dark table-hover">
+          <thead>
+            <tr>
+              <th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="userTableBody"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
-</div>
-
-<!-- Main Content -->
-<div class="main-content">
-  <h2 class="mb-4">Manage Users</h2>
-  <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#userModal" onclick="openAddUserModal()">
-    <i class="fas fa-plus me-1"></i> Add User
-  </button>
-
-  <table class="table table-dark table-hover">
-    <thead>
-      <tr>
-        <th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Actions</th>
-      </tr>
-    </thead>
-    <tbody id="userTableBody"></tbody>
-  </table>
 </div>
 
 <!-- User Modal -->
@@ -142,7 +205,9 @@
   </div>
 </div>
 
-<!-- Scripts -->
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
 const apiUrl = 'http://localhost:8000/api/users';
 
@@ -167,7 +232,7 @@ function fetchUsers() {
                 <i class="fas fa-trash-alt"></i>
               </button>
             </td>
-          </tr>` ;
+          </tr>`;
       });
     });
 }
@@ -181,8 +246,8 @@ function openAddUserModal() {
   document.getElementById('userForm').reset();
   document.getElementById('userId').value = '';
   document.getElementById('passwordGroup').style.display = 'block';
-  document.getElementById('password').required = true; // Make password required in Add User modal
-  document.getElementById('passwordHint').textContent = "(3 maximum password required)"; // Change the hint to "required"
+  document.getElementById('password').required = true;
+  document.getElementById('passwordHint').textContent = "(3 maximum password required)";
 }
 
 function openEditUserModal(user) {
@@ -193,8 +258,8 @@ function openEditUserModal(user) {
   document.getElementById('role').value = user.role;
   document.getElementById('password').value = '';
   document.getElementById('passwordGroup').style.display = 'block';
-  document.getElementById('password').required = false; // Make password optional in Edit User modal
-  document.getElementById('passwordHint').textContent = "(leave blank to keep current password)"; // Restore the original hint
+  document.getElementById('password').required = false;
+  document.getElementById('passwordHint').textContent = "(leave blank to keep current password)";
   new bootstrap.Modal(document.getElementById('userModal')).show();
 }
 
@@ -237,28 +302,22 @@ function deleteUser(id) {
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#d33',
-    cancelButtonColor: '#3085d6',
+    cancelButtonColor: '#6c757d',
     confirmButtonText: 'Yes, delete it!'
   }).then((result) => {
     if (result.isConfirmed) {
       fetch(`${apiUrl}/${id}`, { method: 'DELETE' })
         .then(() => {
           fetchUsers();
-          Swal.fire({
-            icon: 'success',
-            title: 'Deleted!',
-            text: 'User has been deleted.',
-            timer: 1500,
-            showConfirmButton: false
-          });
+          Swal.fire('Deleted!', 'User has been deleted.', 'success');
         });
     }
   });
 }
 
+// Initial fetch
 fetchUsers();
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

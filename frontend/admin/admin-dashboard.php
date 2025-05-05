@@ -16,74 +16,80 @@
       color: #ffffff;
       margin: 0;
       padding: 0;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
     }
     .navbar {
       background-color: #1f1f1f;
+      padding: 1rem;
+      z-index: 1050;
+      position: sticky;
+      top: 0;
     }
     .navbar-brand {
       font-weight: bold;
       color: #ffffff;
     }
+    .navbar-nav .nav-link {
+      color: #ffffff;
+      margin-left: 15px;
+    }
+    .navbar-nav .nav-link:hover {
+      color: #0d6efd;
+    }
     .sidebar {
       background-color: #1f1f1f;
       min-height: 100vh;
-      padding-top: 20px;
       position: fixed;
-      top: 0;
+      top: 56px; /* height of navbar */
       left: 0;
       width: 250px;
-      transition: all 0.3s;
+      padding-top: 20px;
     }
-    .sidebar h4 {
-      text-align: center;
-      color: #fff;
-      margin-bottom: 30px;
-    }
-    .list-group-item {
+    .sidebar .list-group-item {
       background-color: transparent;
       color: #ccc;
       border: none;
     }
-    .list-group-item.active,
-    .list-group-item:hover {
+    .sidebar .list-group-item.active,
+    .sidebar .list-group-item:hover {
       background-color: #333333;
       color: #ffffff;
     }
     .main-content {
       margin-left: 250px;
-      background-color: #121212;
-      min-height: 100vh;
       padding: 20px;
-      flex: 1;
-    }
-    .content {
-      padding: 20px;
-    }
-    .card {
-      border: none;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
     }
     h2 {
       font-weight: bold;
     }
-    .row .card {
-      margin-bottom: 20px;
+    .btn-primary {
+      background-color: #007bff;
+      border-color: #007bff;
     }
-    @media (max-width: 767px) {
-      .sidebar {
-        position: static;
-        width: 100%;
-        min-height: auto;
-        padding-top: 10px;
-      }
-      .main-content {
-        margin-left: 0;
-        padding: 10px;
-      }
+    .btn-primary:hover {
+      background-color: #0056b3;
+      border-color: #004085;
+    }
+    .modal-content {
+      background-color: #1f1f1f;
+      color: #ffffff;
+    }
+    .modal-header {
+      border-bottom: 1px solid #444;
+    }
+    .table-dark {
+      background-color: #2d2d2d;
+    }
+    .table-dark td,
+    .table-dark th {
+      border: 1px solid #444;
+    }
+    .card {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+    .content {
+      padding: 20px;
     }
   </style>
 </head>
@@ -92,79 +98,91 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container-fluid">
-
-    <div class="collapse navbar-collapse justify-content-between">
-      <ul class="navbar-nav">
-        <!-- Additional links can go here -->
-      </ul>
+    <a class="navbar-brand" href="#">Movie Management System</a>
+    <div class="collapse navbar-collapse justify-content-end">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link" href="javascript:void(0);" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+          <a class="nav-link" href="/MovieSite/frontend/index.php" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </li>
       </ul>
     </div>
   </div>
 </nav>
 
-<!-- Dashboard Layout -->
+<!-- Sidebar + Main Content -->
 <div class="container-fluid">
   <div class="row">
-    
     <!-- Sidebar -->
-    <div class="sidebar d-flex flex-column p-3">
-      <h4 class="text-white">Admin Menu</h4>
-      <div class="list-group">
-        <a href="#" class="list-group-item list-group-item-action active"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a>
-        <a href="admin-movies.php" class="list-group-item list-group-item-action"><i class="fas fa-film me-2"></i> Manage Movies</a>
-        <a href="admin-users.php" class="list-group-item list-group-item-action"><i class="fas fa-users me-2"></i> Manage Users</a>
-        <a href="admin-reviews.php" class="list-group-item list-group-item-action"><i class="fas fa-comments me-2"></i> Movie Reviews</a>
+    <div class="col-md-3 sidebar">
+      <div class="d-flex flex-column p-3">
+        <h4 class="text-center text-white mb-4">Admin Menu</h4>
+        <div class="list-group">
+          <a href="admin-dashboard.php" class="list-group-item list-group-item-action active">
+            <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+          </a>
+          <a href="admin-users.php" class="list-group-item list-group-item-action">
+            <i class="fas fa-users me-2"></i> Manage Users</a>
+          <a href="admin-movies.php" class="list-group-item list-group-item-action ">
+            <i class="fas fa-film me-2"></i> Manage Movies
+          </a>
+          <a href="admin-reviews.php" class="list-group-item list-group-item-action">
+            <i class="fas fa-comments me-2"></i> Movie Reviews
+          </a>
+          <a href="admin-reports.php" class="list-group-item list-group-item-action">
+            <i class="fas fa-chart-bar me-2"></i> Reports
+          </a>
+        </div>
       </div>
     </div>
 
     <!-- Main Content -->
-    <div class="main-content">
+    <div class="col-md-9 main-content">
       <h2>Welcome, Admin</h2>
-      
 
       <!-- Stats Cards -->
       <div class="row mt-4">
-        <div class="col-md-4 mb-3">
+        <div class="col-md-6 mb-3">
           <div class="card bg-dark text-white text-center">
             <div class="card-body">
               <h5 class="card-title"><i class="fas fa-film me-2"></i> Total Movies</h5>
-              <p class="card-text fs-2">42</p>
+              <p class="card-text fs-2" id="totalMovies">Loading...</p>
             </div>
           </div>
         </div>
-        <div class="col-md-4 mb-3">
+        <div class="col-md-6 mb-3">
           <div class="card bg-dark text-white text-center">
             <div class="card-body">
-              <h5 class="card-title"><i class="fas fa-user-friends me-2"></i> Registered Users</h5>
-              <p class="card-text fs-2">108</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4 mb-3">
-          <div class="card bg-dark text-white text-center">
-            <div class="card-body">
-              <h5 class="card-title"><i class="fas fa-hourglass-half me-2"></i> Pending Reviews</h5>
-              <p class="card-text fs-2">7</p>
+              <h5 class="card-title"><i class="fas fa-users me-2"></i> Total Users</h5>
+              <p class="card-text fs-2" id="totalUsers">Loading...</p>
             </div>
           </div>
         </div>
       </div>
     </div> <!-- End Main Content -->
-
   </div>
 </div>
 
-<!-- Bootstrap Bundle -->
+<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+<!-- Custom Script -->
 <script>
-  document.getElementById("logoutBtn").addEventListener("click", function () {
-    window.location.href = "index.php"; // Replace with your real logout logic
-  });
+  fetch("http://127.0.0.1:8000/api/public-dashboard")
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
+    .then(data => {
+      document.getElementById("totalMovies").textContent = data.total_movies ?? 0;
+      document.getElementById("totalUsers").textContent = data.total_users ?? 0;
+    })
+    .catch(error => {
+      console.error("Fetch error:", error);
+      document.getElementById("totalMovies").textContent = "Error";
+      document.getElementById("totalUsers").textContent = "Error";
+    });
 </script>
 
 </body>

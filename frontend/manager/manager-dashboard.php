@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin - Movie Reviews</title>
+  <title>Admin Dashboard - Movie Management System</title>
 
-  <!-- Bootstrap + FontAwesome -->
+  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- FontAwesome Icons -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
   <style>
     body {
@@ -113,59 +114,51 @@
     <!-- Sidebar -->
     <div class="col-md-3 sidebar">
       <div class="d-flex flex-column p-3">
-        <h4 class="text-center text-white mb-4">Admin Menu</h4>
+        <h4 class="text-center text-white mb-4">Manager Menu</h4>
         <div class="list-group">
-          <a href="admin-dashboard.php" class="list-group-item list-group-item-action ">
+          <a href="manager-dashboard.php" class="list-group-item list-group-item-action active">
             <i class="fas fa-tachometer-alt me-2"></i> Dashboard
           </a>
-          <a href="admin-users.php" class="list-group-item list-group-item-action">
-            <i class="fas fa-users me-2"></i> Manage Users</a>
-          <a href="admin-movies.php" class="list-group-item list-group-item-action ">
+          <a href="manager-movies.php" class="list-group-item list-group-item-action ">
             <i class="fas fa-film me-2"></i> Manage Movies
           </a>
-          <a href="admin-reviews.php" class="list-group-item list-group-item-action active">
+          <a href="manager-reviews.php" class="list-group-item list-group-item-action">
             <i class="fas fa-comments me-2"></i> Movie Reviews
           </a>
-          <a href="admin-reports.php" class="list-group-item list-group-item-action">
+          <a href="manager-reports.php" class="list-group-item list-group-item-action">
             <i class="fas fa-chart-bar me-2"></i> Reports
           </a>
         </div>
       </div>
     </div>
-
-
-
-<!-- Main Content -->
-<div class="main-content">
-  <h2 class="mb-4">Movie Reviews</h2>
-
-  <!-- Review Card 1 -->
-  <div class="card mb-3">
-    <div class="card-body">
-      <h5 class="card-title">The Matrix</h5>
-      <p class="card-text">"An absolute sci-fi masterpiece. Mind-bending action and philosophy!"</p>
-      <small class="text-muted">— user123</small>
-      <div class="d-flex justify-content-end mt-2">
-        <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Delete</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Review Card 2 -->
-  <div class="card mb-3">
-    <div class="card-body">
-      <h5 class="card-title">Inception</h5>
-      <p class="card-text">"A thrilling dive into dreams within dreams. Nolan nailed it!"</p>
-      <small class="text-muted">— movieFan88</small>
-      <div class="d-flex justify-content-end mt-2">
-        <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Delete</button>
-      </div>
-    </div>
-  </div>
+    <!-- Main Content -->
+    <div class="col-md-9 main-content">
+      <h2>Welcome, Manager</h2>
 
 </div>
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Custom Script -->
+<script>
+  fetch("http://127.0.0.1:8000/api/public-dashboard")
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
+    .then(data => {
+      document.getElementById("totalMovies").textContent = data.total_movies ?? 0;
+      document.getElementById("totalUsers").textContent = data.total_users ?? 0;
+    })
+    .catch(error => {
+      console.error("Fetch error:", error);
+      document.getElementById("totalMovies").textContent = "Error";
+      document.getElementById("totalUsers").textContent = "Error";
+    });
+</script>
+
 </body>
 </html>

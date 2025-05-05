@@ -8,6 +8,22 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    // Authenticated user's profile
+    public function profile(Request $request)
+    {
+        $user = $request->user(); // Authenticated user
+
+        return response()->json([
+            'username' => $user->username,
+            'email' => $user->email,
+            'role' => match ($user->role) {
+                0 => 'Admin',
+                1 => 'Manager',
+                default => 'User',
+            }
+        ]);
+    }
+
     // Get all users
     public function users()
     {
@@ -44,16 +60,15 @@ class UserController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->role = $request->role;
-    
+
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
         }
-    
+
         $user->save();
-    
+
         return response()->json(['message' => 'User updated successfully']);
     }
-    
 
     // Delete a user
     public function delete($id)
@@ -62,12 +77,6 @@ class UserController extends Controller
         $user->delete();
 
         return response()->json(['message' => 'User deleted successfully']);
-    }
-
-    // Authenticated user's profile
-    public function profile(Request $request)
-    {
-        return response()->json($request->user());
     }
 
     // For /userdashboard route

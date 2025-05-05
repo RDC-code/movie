@@ -8,6 +8,7 @@
   <!-- Bootstrap + FontAwesome -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
   <style>
     body {
       background-color: #121212;
@@ -100,8 +101,7 @@
     <div class="collapse navbar-collapse justify-content-end">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link" href="/MovieSite/frontend/index.php" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
-        </li>
+        <a class="nav-link" href="/MovieSite/frontend/index.php" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
       </ul>
     </div>
   </div>
@@ -113,27 +113,23 @@
     <!-- Sidebar -->
     <div class="col-md-3 sidebar">
       <div class="d-flex flex-column p-3">
-        <h4 class="text-center text-white mb-4">Admin Menu</h4>
+        <h4 class="text-center text-white mb-4">Manager Menu</h4>
         <div class="list-group">
-          <a href="admin-dashboard.php" class="list-group-item list-group-item-action ">
+          <a href="manager-dashboard.php" class="list-group-item list-group-item-action">
             <i class="fas fa-tachometer-alt me-2"></i> Dashboard
           </a>
-          <a href="admin-users.php" class="list-group-item list-group-item-action">
-            <i class="fas fa-users me-2"></i> Manage Users</a>
-          <a href="admin-movies.php" class="list-group-item list-group-item-action ">
+          <a href="manager-movies.php" class="list-group-item list-group-item-action ">
             <i class="fas fa-film me-2"></i> Manage Movies
           </a>
-          <a href="admin-reviews.php" class="list-group-item list-group-item-action active">
+          <a href="manager-reviews.php" class="list-group-item list-group-item-action active">
             <i class="fas fa-comments me-2"></i> Movie Reviews
           </a>
-          <a href="admin-reports.php" class="list-group-item list-group-item-action">
+          <a href="manager-reports.php" class="list-group-item list-group-item-action">
             <i class="fas fa-chart-bar me-2"></i> Reports
           </a>
         </div>
       </div>
     </div>
-
-
 
 <!-- Main Content -->
 <div class="main-content">

@@ -177,9 +177,9 @@
             if (data.user.role === 0) {
               window.location.href = 'admin/admin-dashboard.php';
             } else if (data.user.role === 1) {
-              window.location.href = 'manager-dashboard.php';
+              window.location.href = 'manager/manager-dashboard.php';
             } else if (data.user.role === 2) {
-              window.location.href = 'user-dashboard.php';
+              window.location.href = 'user/user-dashboard.php';
             }
           });
         } else {

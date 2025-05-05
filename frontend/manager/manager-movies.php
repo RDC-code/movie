@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin Dashboard - Movie Management System</title>
+  <title>Manager Dashboard - Movie Management System</title>
 
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -41,7 +41,7 @@
       background-color: #1f1f1f;
       min-height: 100vh;
       position: fixed;
-      top: 56px;
+      top: 56px; /* height of navbar */
       left: 0;
       width: 250px;
       padding-top: 20px;
@@ -59,6 +59,9 @@
     .main-content {
       margin-left: 250px;
       padding: 20px;
+    }
+    h2 {
+      font-weight: bold;
     }
     .btn-primary {
       background-color: #007bff;
@@ -82,6 +85,14 @@
     .table-dark th {
       border: 1px solid #444;
     }
+    .card {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+    .content {
+      padding: 20px;
+    }
   </style>
 </head>
 <body>
@@ -93,7 +104,7 @@
     <div class="collapse navbar-collapse justify-content-end">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link" href="/MovieSite/frontend/index.php" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <a class="nav-link" href="/MovieSite/frontend/index.php" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </li>
       </ul>
     </div>
@@ -106,20 +117,18 @@
     <!-- Sidebar -->
     <div class="col-md-3 sidebar">
       <div class="d-flex flex-column p-3">
-        <h4 class="text-center text-white mb-4">Admin Menu</h4>
+        <h4 class="text-center text-white mb-4">Manager Menu</h4>
         <div class="list-group">
-          <a href="admin-dashboard.php" class="list-group-item list-group-item-action ">
+          <a href="manager-dashboard.php" class="list-group-item list-group-item-action">
             <i class="fas fa-tachometer-alt me-2"></i> Dashboard
           </a>
-          <a href="admin-users.php" class="list-group-item list-group-item-action">
-            <i class="fas fa-users me-2"></i> Manage Users</a>
-          <a href="admin-movies.php" class="list-group-item list-group-item-action active">
+          <a href="manager-movies.php" class="list-group-item list-group-item-action active">
             <i class="fas fa-film me-2"></i> Manage Movies
           </a>
-          <a href="admin-reviews.php" class="list-group-item list-group-item-action">
+          <a href="manager-reviews.php" class="list-group-item list-group-item-action">
             <i class="fas fa-comments me-2"></i> Movie Reviews
           </a>
-          <a href="admin-reports.php" class="list-group-item list-group-item-action">
+          <a href="manager-reports.php" class="list-group-item list-group-item-action">
             <i class="fas fa-chart-bar me-2"></i> Reports
           </a>
         </div>
@@ -127,7 +136,7 @@
     </div>
 
     <!-- Main Content -->
-    <div class="col-md-9 main-content">
+    <div class="col-md-9 offset-md-3 main-content">
       <h2>Manage Movies</h2>
       <button class="btn btn-primary mb-3" onclick="openAddModal()">Add Movie</button>
       <table class="table table-bordered table-dark table-striped" id="movieTable">
@@ -180,11 +189,9 @@
   </div>
 </div>
 
+<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  document.getElementById("logoutBtn").addEventListener("click", function () {
-    window.location.href = "/MovieSite/frontend/index.php";
-  });
 
   const apiBase = 'http://localhost:8000/api/movies';
   const movieTableBody = document.querySelector("#movieTable tbody");
@@ -206,7 +213,7 @@
                 <button class="btn btn-sm btn-warning" onclick='editMovie(${JSON.stringify(movie)})'>Edit</button>
                 <button class="btn btn-sm btn-danger" onclick='deleteMovie(${movie.id})'>Delete</button>
               </td>
-            </tr>`;
+            </tr>`; 
         });
       });
   }
@@ -244,24 +251,20 @@
     .then(() => {
       modal.hide();
       fetchMovies();
-      Swal.fire({
-        icon: 'success',
-        title: movieId ? 'Movie Updated!' : 'Movie Added!',
-        text: 'The movie has been saved successfully.',
-        timer: 2000,
-        showConfirmButton: false
-      });
+      Swal.fire('Success!', 'Movie saved successfully!', 'success');
+    }).catch(() => {
+      Swal.fire('Error!', 'Something went wrong!', 'error');
     });
   });
 
   function deleteMovie(id) {
     Swal.fire({
       title: 'Are you sure?',
-      text: 'This movie will be permanently deleted.',
+      text: "You won't be able to revert this!",
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'Cancel',
+      cancelButtonText: 'No, keep it'
     }).then((result) => {
       if (result.isConfirmed) {
         fetch(`${apiBase}/${id}`, {
@@ -270,13 +273,9 @@
         .then(res => res.json())
         .then(() => {
           fetchMovies();
-          Swal.fire({
-            icon: 'success',
-            title: 'Deleted!',
-            text: 'Movie has been deleted.',
-            timer: 2000,
-            showConfirmButton: false
-          });
+          Swal.fire('Deleted!', 'Your movie has been deleted.', 'success');
+        }).catch(() => {
+          Swal.fire('Error!', 'Something went wrong!', 'error');
         });
       }
     });
@@ -284,5 +283,6 @@
 
   fetchMovies();
 </script>
+
 </body>
 </html>
