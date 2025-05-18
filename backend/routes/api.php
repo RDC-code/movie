@@ -6,23 +6,13 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MovieController;
-use App\Http\Controllers\ReviewController;
-use App\Http\Controllers\UserProfileController;
-
-
-
-Route::get('/reviews', [ReviewController::class, 'index']);  // For admin to list reviews
-Route::post('/reviews', [ReviewController::class, 'store']);
-Route::post('/movies/{id}/rate', [ReviewController::class, 'rateMovie']);  
-
-
-
 
 
 
 
   Route::get('/profile', [UserProfileController::class, 'profile']);
     Route::post('/update-password', [UserProfileController::class, 'updatePassword']);
+
 
 
 Route::get('/public-dashboard', function () {

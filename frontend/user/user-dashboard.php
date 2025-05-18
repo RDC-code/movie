@@ -115,13 +115,13 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark px-3">
   <a class="navbar-brand" href="#">Movie Portal</a>
-  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
     <span class="navbar-toggler-icon"></span>
   </button>
 
   <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
-    <form class="d-flex me-3" role="search" onsubmit="event.preventDefault(); searchMovies();">
-      <input class="form-control me-2" type="search" id="searchInput" placeholder="Search movies..." aria-label="Search" />
+    <form class="d-flex me-3" onsubmit="event.preventDefault(); searchMovies();">
+      <input class="form-control me-2" type="search" id="searchInput" placeholder="Search movies..." />
       <button class="btn btn-outline-warning" type="submit"><i class="fas fa-search"></i></button>
     </form>
     <ul class="navbar-nav align-items-center">
@@ -140,13 +140,13 @@
   <div class="row g-4" id="movieContainer"></div>
 </div>
 
-<!-- Rate Modal (no fade class for instant popup) -->
-<div class="modal" id="rateModal" tabindex="-1" aria-labelledby="rateModalLabel" aria-hidden="true">
+<!-- Rate Modal -->
+<div class="modal" id="rateModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content bg-dark text-white">
       <div class="modal-header border-0">
-        <h5 class="modal-title" id="rateModalLabel">Rate Movie</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title">Rate Movie</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
         <p id="modalMovieTitle" class="fs-5 mb-3"></p>
@@ -160,7 +160,7 @@
       </div>
       <div class="modal-footer border-0">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button id="submitRatingBtn" type="button" class="btn btn-warning">Submit Rating</button>
+        <button id="submitRatingBtn" class="btn btn-warning">Submit Rating</button>
       </div>
     </div>
   </div>
@@ -169,9 +169,22 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
   const movieContainer = document.getElementById('movieContainer');
+  const rateModal = new bootstrap.Modal(document.getElementById('rateModal'));
   let selectedMovieId = null;
   let selectedRating = 0;
-  const rateModal = new bootstrap.Modal(document.getElementById('rateModal'));
+
+  // Fetch movies on load
+  window.onload = fetchMovies;
+
+  function fetchMovies() {
+    fetch('http://localhost:8000/api/movies')
+      .then(res => res.json())
+      .then(data => renderMovies(data))
+      .catch(err => {
+        console.error(err);
+        movieContainer.innerHTML = `<p class="text-center text-danger">Error loading movies.</p>`;
+      });
+  }
 
   function renderMovies(movies) {
     movieContainer.innerHTML = '';
@@ -185,7 +198,7 @@
       card.innerHTML = `
         <a href="${movie.link || '#'}" target="_blank" class="text-decoration-none">
           <div class="card movie-card">
-            <img src="http://localhost:8000/storage/${movie.thumbnail}" alt="${movie.title}" class="movie-thumbnail" />
+            <img src="http://localhost:8000/storage/${movie.thumbnail}" class="movie-thumbnail" />
             <div class="play-btn"><i class="fas fa-play-circle"></i></div>
             <div class="card-body">
               <h5 class="card-title">${movie.title}</h5>
@@ -197,9 +210,8 @@
       `;
       movieContainer.appendChild(card);
 
-      // Add click listener for Rate button
       card.querySelector('.rate-btn').addEventListener('click', e => {
-        e.preventDefault();  // prevent anchor click
+        e.preventDefault();
         selectedMovieId = movie.id;
         selectedRating = 0;
         resetStars();
@@ -209,12 +221,19 @@
     });
   }
 
-  function resetStars() {
-    const stars = document.querySelectorAll('#starRating i');
-    stars.forEach(star => star.classList.remove('selected'));
+  function searchMovies() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    fetch('http://localhost:8000/api/movies')
+      .then(res => res.json())
+      .then(movies => {
+        const filtered = movies.filter(movie =>
+          movie.title.toLowerCase().includes(query) || movie.description?.toLowerCase().includes(query)
+        );
+        renderMovies(filtered);
+      });
   }
 
-  // Star rating selection
+  // Star rating
   document.querySelectorAll('#starRating i').forEach(star => {
     star.addEventListener('click', () => {
       selectedRating = parseInt(star.getAttribute('data-value'));
@@ -229,72 +248,38 @@
   });
 
   function updateStars(rating) {
-    const stars = document.querySelectorAll('#starRating i');
-    stars.forEach(star => {
-      if (parseInt(star.getAttribute('data-value')) <= rating) {
-        star.classList.add('selected');
-      } else {
-        star.classList.remove('selected');
-      }
+    document.querySelectorAll('#starRating i').forEach(star => {
+      const value = parseInt(star.getAttribute('data-value'));
+      star.classList.toggle('selected', value <= rating);
     });
   }
 
-  // Submit rating
+  function resetStars() {
+    document.querySelectorAll('#starRating i').forEach(star => star.classList.remove('selected'));
+  }
+
   document.getElementById('submitRatingBtn').addEventListener('click', () => {
     if (selectedRating === 0) {
-      alert('Please select a rating before submitting.');
+      alert('Please select a rating.');
       return;
     }
-    // Example POST request to submit rating (replace URL and data structure as needed)
     fetch(`http://localhost:8000/api/movies/${selectedMovieId}/rate`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        // 'Authorization': `Bearer ${token}`, // if needed
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ rating: selectedRating })
     })
     .then(res => {
       if (!res.ok) throw new Error('Failed to submit rating');
       return res.json();
     })
-    .then(data => {
-      alert('Thank you for your rating!');
+    .then(() => {
+      alert('Thank you for rating!');
       rateModal.hide();
     })
     .catch(err => {
-      alert('Error submitting rating: ' + err.message);
+      alert('Error: ' + err.message);
     });
   });
-
-  // Search functionality
-  function searchMovies() {
-    const query = document.getElementById('searchInput').value.trim().toLowerCase();
-    if (!query) {
-      loadMovies();
-      return;
-    }
-    const filtered = window.allMovies.filter(m => m.title.toLowerCase().includes(query));
-    renderMovies(filtered);
-  }
-
-  // Load movies from API
-  function loadMovies() {
-    fetch('http://localhost:8000/api/movies')
-      .then(res => res.json())
-      .then(data => {
-        window.allMovies = data;
-        renderMovies(data);
-      })
-      .catch(err => {
-        movieContainer.innerHTML = `<p class="text-center text-danger">Error loading movies.</p>`;
-        console.error(err);
-      });
-  }
-
-  // Initial load
-  loadMovies();
 </script>
-
 </body>
 </html>
