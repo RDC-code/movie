@@ -8,17 +8,20 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateReviewsTable extends Migration
 {
-    public function up()
-    {
-        Schema::create('reviews', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('movie_id')->constrained('movies')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->text('review');
-            $table->integer('rating');
-            $table->timestamps();
-        });
-    }
+  // database/migrations/xxxx_xx_xx_create_reviews_table.php
+public function up()
+{
+    Schema::create('reviews', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('user_id')->constrained()->onDelete('cascade');
+        $table->foreignId('movie_id')->constrained()->onDelete('cascade');
+        $table->tinyInteger('rating'); // star rating 1-5
+        $table->text('review_text')->nullable();  // can be null for star only
+        $table->timestamps();
+    });
+}
+
+
 
     public function down()
     {

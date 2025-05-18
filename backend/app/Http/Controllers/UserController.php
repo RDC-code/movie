@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    
+
     // Authenticated user's profile
     public function profile(Request $request)
     {

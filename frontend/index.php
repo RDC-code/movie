@@ -42,7 +42,7 @@
 <body>
 
   <div class="form-container" id="loginForm">
-    <h2><i class="fas fa-film"></i> RDC'S Movie Site</h2>
+    <h2>Movie Management System</h2>
     <form>
       <div class="mb-3">
         <label for="loginEmail" class="form-label">Email</label>

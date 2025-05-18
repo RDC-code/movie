@@ -2,170 +2,167 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Admin - Movie Reviews</title>
-
-  <!-- Bootstrap + FontAwesome -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
   <style>
     body {
       background-color: #121212;
-      color: #ffffff;
-      margin: 0;
-      padding: 0;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     .navbar {
-      background-color: #1f1f1f;
-      padding: 1rem;
-      z-index: 1050;
-      position: sticky;
-      top: 0;
+      background-color: #1c1c1c;
     }
     .navbar-brand {
-      font-weight: bold;
-      color: #ffffff;
-    }
-    .navbar-nav .nav-link {
-      color: #ffffff;
-      margin-left: 15px;
-    }
-    .navbar-nav .nav-link:hover {
-      color: #0d6efd;
-    }
-    .sidebar {
-      background-color: #1f1f1f;
-      min-height: 100vh;
-      position: fixed;
-      top: 56px; /* height of navbar */
-      left: 0;
-      width: 250px;
-      padding-top: 20px;
-    }
-    .sidebar .list-group-item {
-      background-color: transparent;
-      color: #ccc;
-      border: none;
-    }
-    .sidebar .list-group-item.active,
-    .sidebar .list-group-item:hover {
-      background-color: #333333;
-      color: #ffffff;
-    }
-    .main-content {
-      margin-left: 250px;
-      padding: 20px;
-    }
-    h2 {
+      color: #ffcc00 !important;
       font-weight: bold;
     }
-    .btn-primary {
-      background-color: #007bff;
-      border-color: #007bff;
+    .review-card {
+      background-color: #1e1e1e;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
     }
-    .btn-primary:hover {
-      background-color: #0056b3;
-      border-color: #004085;
+    .stars {
+      color: #f1c40f;
+      font-size: 1.2rem;
     }
-    .modal-content {
-      background-color: #1f1f1f;
-      color: #ffffff;
+    .btn-delete {
+      color: #ff4d4d;
     }
-    .modal-header {
-      border-bottom: 1px solid #444;
-    }
-    .table-dark {
-      background-color: #2d2d2d;
-    }
-    .table-dark td,
-    .table-dark th {
-      border: 1px solid #444;
-    }
-    .card {
-      border: none;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    }
-    .content {
-      padding: 20px;
+    .btn-rate {
+      margin-left: 10px;
     }
   </style>
 </head>
 <body>
-
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Movie Management System</a>
-    <div class="collapse navbar-collapse justify-content-end">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link" href="/MovieSite/frontend/index.php" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
-        </li>
-      </ul>
-    </div>
+<nav class="navbar navbar-expand-lg navbar-dark px-3">
+  <a class="navbar-brand" href="#">Admin Dashboard - Reviews</a>
+  <div class="collapse navbar-collapse justify-content-end" id="navbarAdmin">
+    <ul class="navbar-nav align-items-center">
+      <li class="nav-item">
+        <a class="nav-link" href="admin-dashboard.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/MovieSite/frontend/index.php" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </li>
+    </ul>
   </div>
 </nav>
 
-<!-- Sidebar + Main Content -->
-<div class="container-fluid">
-  <div class="row">
-    <!-- Sidebar -->
-    <div class="col-md-3 sidebar">
-      <div class="d-flex flex-column p-3">
-        <h4 class="text-center text-white mb-4">Admin Menu</h4>
-        <div class="list-group">
-          <a href="admin-dashboard.php" class="list-group-item list-group-item-action ">
-            <i class="fas fa-tachometer-alt me-2"></i> Dashboard
-          </a>
-          <a href="admin-users.php" class="list-group-item list-group-item-action">
-            <i class="fas fa-users me-2"></i> Manage Users</a>
-          <a href="admin-movies.php" class="list-group-item list-group-item-action ">
-            <i class="fas fa-film me-2"></i> Manage Movies
-          </a>
-          <a href="admin-reviews.php" class="list-group-item list-group-item-action active">
-            <i class="fas fa-comments me-2"></i> Movie Reviews
-          </a>
-          <a href="admin-reports.php" class="list-group-item list-group-item-action">
-            <i class="fas fa-chart-bar me-2"></i> Reports
-          </a>
-        </div>
-      </div>
-    </div>
-
-
-
-<!-- Main Content -->
-<div class="main-content">
-  <h2 class="mb-4">Movie Reviews</h2>
-
-  <!-- Review Card 1 -->
-  <div class="card mb-3">
-    <div class="card-body">
-      <h5 class="card-title">The Matrix</h5>
-      <p class="card-text">"An absolute sci-fi masterpiece. Mind-bending action and philosophy!"</p>
-      <small class="text-muted">— user123</small>
-      <div class="d-flex justify-content-end mt-2">
-        <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Delete</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Review Card 2 -->
-  <div class="card mb-3">
-    <div class="card-body">
-      <h5 class="card-title">Inception</h5>
-      <p class="card-text">"A thrilling dive into dreams within dreams. Nolan nailed it!"</p>
-      <small class="text-muted">— movieFan88</small>
-      <div class="d-flex justify-content-end mt-2">
-        <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Delete</button>
-      </div>
-    </div>
-  </div>
-
+<div class="container mt-4">
+  <h3>Movie Reviews</h3>
+  <div id="reviewsList"></div>
 </div>
 
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Helper: Render stars (full stars only)
+  function renderStars(rating) {
+    let stars = "";
+    for (let i = 1; i <= 5; i++) {
+      stars += `<i class="fas fa-star${i <= rating ? '' : '-half-alt'}"></i>`;
+    }
+    return stars;
+  }
+
+  // Prompt user to enter rating (1-5)
+  function promptRating(movieId) {
+    let rating = prompt("Rate this movie (1 to 5 stars):");
+    if (rating === null) return; // cancelled
+
+    rating = parseInt(rating);
+    if (isNaN(rating) || rating < 1 || rating > 5) {
+      alert("Please enter a valid number between 1 and 5.");
+      return;
+    }
+
+    submitRating(movieId, rating);
+  }
+
+  // Submit rating to backend and refresh reviews
+  function submitRating(movieId, rating) {
+    fetch(`http://127.0.0.1:8000/api/movies/${movieId}/rate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // Add auth headers if your API requires authentication
+        // "Authorization": "Bearer your_token_here"
+      },
+      body: JSON.stringify({ rating })
+    })
+    .then(res => {
+      if (!res.ok) throw new Error("Failed to submit rating.");
+      return res.json();
+    })
+    .then(data => {
+      alert(`Rating submitted! New average rating: ${data.average_rating} (${data.ratings_count} ratings)`);
+      fetchReviews(); // refresh list to reflect changes
+    })
+    .catch(err => {
+      alert("Error submitting rating: " + err.message);
+    });
+  }
+
+  // Fetch reviews and render
+  function fetchReviews() {
+    fetch("http://127.0.0.1:8000/api/reviews")
+      .then(res => res.json())
+      .then(data => {
+        const reviewsList = document.getElementById("reviewsList");
+        reviewsList.innerHTML = "";
+        if (data.length === 0) {
+          reviewsList.innerHTML = "<p>No reviews yet.</p>";
+          return;
+        }
+
+        data.forEach(review => {
+          reviewsList.innerHTML += `
+            <div class="review-card">
+              <h5>${review.movie_title}</h5>
+              <p><span class="stars">${renderStars(review.rating)}</span></p>
+              <p>${review.review || '<em>No review text</em>'}</p>
+              <p><small>By: ${review.user_name} | On: ${new Date(review.created_at).toLocaleDateString()}</small></p>
+              <button class="btn btn-sm btn-outline-danger btn-delete" data-id="${review.id}"><i class="fas fa-trash"></i> Delete</button>
+              <button class="btn btn-sm btn-outline-warning btn-rate" data-movie-id="${review.movie_id}"><i class="fas fa-star"></i> Rate it</button>
+            </div>
+          `;
+        });
+
+        // Attach delete handlers
+        document.querySelectorAll(".btn-delete").forEach(btn => {
+          btn.addEventListener("click", e => {
+            const reviewId = btn.getAttribute("data-id");
+            if (confirm("Are you sure you want to delete this review?")) {
+              fetch(`http://127.0.0.1:8000/api/reviews/${reviewId}`, {
+                method: "DELETE",
+                headers: {
+                  // Add auth headers if needed
+                }
+              })
+              .then(res => {
+                if (!res.ok) throw new Error("Failed to delete review.");
+                fetchReviews();
+              })
+              .catch(err => alert("Error deleting review."));
+            }
+          });
+        });
+
+        // Attach rate it handlers
+        document.querySelectorAll(".btn-rate").forEach(btn => {
+          btn.addEventListener("click", e => {
+            const movieId = btn.getAttribute("data-movie-id");
+            promptRating(movieId);
+          });
+        });
+      })
+      .catch(err => console.error("Error fetching reviews:", err));
+  }
+
+  document.addEventListener("DOMContentLoaded", fetchReviews);
+</script>
 </body>
 </html>
