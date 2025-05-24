@@ -1,206 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Movie Management System - Login/Register</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <meta charset="UTF-8" />
+  <title>Movie Portal - Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Font Awesome for play icon -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
     body {
-      background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1607082349560-18f3b0948b2b') no-repeat center center fixed;
-      background-size: cover;
-      font-family: 'Segoe UI', sans-serif;
+      background-color: #121212;
+      color: #fff;
     }
-    .form-container {
-      background-color: rgba(0, 0, 0, 0.8);
-      padding: 2rem;
-      border-radius: 15px;
-      color: white;
-      max-width: 400px;
-      margin: auto;
-      margin-top: 5%;
-      box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+    .navbar-brand {
+      font-weight: bold;
     }
-    .form-container h2 {
-      text-align: center;
-      margin-bottom: 1.5rem;
-      color: #ff4444;
+    .movie-card {
+      transition: transform 0.2s;
+      cursor: pointer;
     }
-    .form-control::placeholder {
-      color: rgba(255,255,255,0.6);
+    .movie-card:hover {
+      transform: scale(1.05);
     }
-    .form-switch label {
-      color: #ccc;
-    }
-    .btn-danger {
+    .movie-thumbnail {
       width: 100%;
+      height: 300px;
+      object-fit: cover;
+    }
+    .play-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 3rem;
+      color: rgba(255, 255, 255, 0.7);
+      pointer-events: none;
+    }
+    .card {
+      position: relative;
+      background-color: #1e1e1e;
+      border: none;
+      color: white;
     }
   </style>
 </head>
 <body>
-
-  <div class="form-container" id="loginForm">
-    <h2>Movie Management System</h2>
-    <form>
-      <div class="mb-3">
-        <label for="loginEmail" class="form-label">Email</label>
-        <input type="email" class="form-control bg-dark text-white" id="loginEmail" placeholder="Enter your email here">
-      </div>
-      <div class="mb-3">
-        <label for="loginPassword" class="form-label">Password</label>
-        <input type="password" class="form-control bg-dark text-white" id="loginPassword" placeholder="Enter your password here">
-      </div>
-      <button type="submit" class="btn btn-danger"><i class="fas fa-sign-in-alt"></i> Login</button>
-      <div class="form-switch mt-3 text-center">
-        <input class="form-check-input" type="checkbox" id="toggleRegister">
-        <label class="form-check-label" for="toggleRegister">New here? Register instead</label>
-      </div>
-    </form>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-black">
+  <div class="container">
+    <a class="navbar-brand" href="#">R.Movies</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
   </div>
+</nav>
 
-  <div class="form-container d-none" id="registerForm">
-    <h2><i class="fas fa-user-plus"></i> Register</h2>
-    <form>
-      <div class="mb-3">
-        <label for="regUsername" class="form-label">Username</label>
-        <input type="text" class="form-control bg-dark text-white" id="regUsername" placeholder="Enter username">
-      </div>
-      <div class="mb-3">
-        <label for="regEmail" class="form-label">Email</label>
-        <input type="email" class="form-control bg-dark text-white" id="regEmail" placeholder="user@example.com">
-      </div>
-      <div class="mb-3">
-        <label for="regPassword" class="form-label">Password</label>
-        <input type="password" class="form-control bg-dark text-white" id="regPassword" placeholder="Create password">
-      </div>
-      <button type="submit" class="btn btn-danger"><i class="fas fa-user-check"></i> Register</button>
-      <div class="form-switch mt-3 text-center">
-        <input class="form-check-input" type="checkbox" id="toggleLogin">
-        <label class="form-check-label" for="toggleLogin">Already have an account? Login instead</label>
-      </div>
-    </form>
+<!-- Hero Section -->
+<section class="text-center py-5">
+  <div class="container">
+    <h1 class="display-4 fw-bold">Welcome to R.Movies</h1>
+    <p class="lead">Browse movies, watch trailers, and leave your reviews!</p>
+    <a href="login-register.php" class="btn btn-primary btn-lg mt-3">Login here to get started</a>
   </div>
+</section>
 
-  <script>
-    const loginForm = document.getElementById('loginForm');
-    const registerForm = document.getElementById('registerForm');
-    document.getElementById('toggleRegister').addEventListener('change', () => {
-      loginForm.classList.add('d-none');
-      registerForm.classList.remove('d-none');
+<!-- Search bar -->
+<div class="container mb-4">
+  <input
+    type="text"
+    class="form-control"
+    id="searchInput"
+    placeholder="Search movies..."
+    oninput="searchMovies()"
+    autocomplete="off"
+  />
+</div>
+
+<!-- Movie Preview Section -->
+<div class="container my-4">
+  <h2 class="section-title">Browse Movies</h2>
+  <div class="row g-4" id="movieContainer"></div>
+</div>
+
+
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  const movieContainer = document.getElementById('movieContainer');
+
+  // Fetch movies on page load
+  window.onload = fetchMovies;
+
+  function fetchMovies() {
+    fetch('http://localhost:8000/api/movies')
+      .then(res => {
+        if (!res.ok) throw new Error('Network response was not ok');
+        return res.json();
+      })
+      .then(data => renderMovies(data))
+      .catch(err => {
+        console.error(err);
+        movieContainer.innerHTML = `<p class="text-center text-danger">Error loading movies.</p>`;
+      });
+  }
+
+  function renderMovies(movies) {
+    movieContainer.innerHTML = '';
+    if (!movies.length) {
+      movieContainer.innerHTML = `<p class="text-center text-muted">No movies found.</p>`;
+      return;
+    }
+    movies.forEach(movie => {
+      const card = document.createElement('div');
+      card.className = 'col-sm-6 col-md-4 col-lg-3';
+      card.innerHTML = `
+        <div class="card movie-card" role="button" tabindex="0">
+          <img src="http://localhost:8000/storage/${movie.thumbnail}" alt="${movie.title}" class="movie-thumbnail" />
+          <div class="play-btn"><i class="fas fa-play-circle"></i></div>
+          <div class="card-body">
+            <h5 class="card-title">${movie.title}</h5>
+            <p class="card-text">${movie.description || ''}</p>
+          </div>
+        </div>
+      `;
+      movieContainer.appendChild(card);
+
+      // Show alert on clicking the movie card
+      card.querySelector('.movie-card').addEventListener('click', () => {
+        alert('Please login first to watch movies.');
+      });
     });
-    document.getElementById('toggleLogin').addEventListener('change', () => {
-      registerForm.classList.add('d-none');
-      loginForm.classList.remove('d-none');
-    });
-  </script>
+  }
 
-  <script>
-    document.querySelector('#registerForm form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const username = document.getElementById('regUsername').value;
-      const email = document.getElementById('regEmail').value;
-      const password = document.getElementById('regPassword').value;
-
-      try {
-        const response = await fetch('http://127.0.0.1:8000/api/register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            name: username,
-            email: email,
-            password: password,
-            role: 2
-          })
-        });
-
-        const data = await response.json();
-        if (response.ok) {
-          Swal.fire({
-            icon: 'success',
-            title: 'Registration Successful!',
-            text: 'You can now log in.',
-            confirmButtonColor: '#d33'
-          });
-          document.getElementById('toggleLogin').checked = true;
-          registerForm.classList.add('d-none');
-          loginForm.classList.remove('d-none');
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Registration Failed',
-            text: data.message || 'Please try again.',
-            confirmButtonColor: '#d33'
-          });
-        }
-      } catch (error) {
-        console.error(error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Something went wrong during registration.',
-          confirmButtonColor: '#d33'
-        });
-      }
-    });
-
-    document.querySelector('#loginForm form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const email = document.getElementById('loginEmail').value;
-      const password = document.getElementById('loginPassword').value;
-
-
-      //https://backendcalape.rcalape.online//api/login
-      try {
-        const response = await fetch('http://127.0.0.1:8000/api/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email, password })
-        });
-
-        const data = await response.json();
-        if (response.ok) {
-          Swal.fire({
-            icon: 'success',
-            title: 'Login Successful!',
-            timer: 1500,
-            showConfirmButton: false
-          }).then(() => {
-            localStorage.setItem('auth_token', data.token);
-            if (data.user.role === 0) {
-              window.location.href = 'admin/admin-dashboard.php';
-            } else if (data.user.role === 1) {
-              window.location.href = 'manager/manager-dashboard.php';
-            } else if (data.user.role === 2) {
-              window.location.href = 'user/user-dashboard.php';
-            }
-          });
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Login Failed',
-            text: data.message || 'Invalid email or password.',
-            confirmButtonColor: '#d33'
-          });
-        }
-      } catch (error) {
-        console.error(error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Something went wrong during login.',
-          confirmButtonColor: '#d33'
-        });
-      }
-    });
-  </script>
-
+  function searchMovies() {
+    const query = document.getElementById('searchInput').value.toLowerCase().trim();
+    fetch('http://localhost:8000/api/movies')
+      .then(res => res.json())
+      .then(movies => {
+        const filtered = movies.filter(movie =>
+          movie.title.toLowerCase().includes(query) ||
+          (movie.description && movie.description.toLowerCase().includes(query))
+        );
+        renderMovies(filtered);
+      })
+      .catch(err => {
+        console.error(err);
+        movieContainer.innerHTML = `<p class="text-center text-danger">Error searching movies.</p>`;
+      });
+  }
+</script>
 </body>
 </html>

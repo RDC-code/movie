@@ -38,7 +38,7 @@
       background-color: #1f1f1f;
       min-height: 100vh;
       position: fixed;
-      top: 56px; /* height of navbar */
+      top: 56px;
       left: 0;
       width: 250px;
       padding-top: 20px;
@@ -101,7 +101,8 @@
     <div class="collapse navbar-collapse justify-content-end">
       <ul class="navbar-nav">
         <li class="nav-item">
-        <a class="nav-link" href="/MovieSite/frontend/index.php" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+          <a class="nav-link" href="/MovieSite/frontend/index.php" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </li>
       </ul>
     </div>
   </div>
@@ -118,7 +119,7 @@
           <a href="manager-dashboard.php" class="list-group-item list-group-item-action">
             <i class="fas fa-tachometer-alt me-2"></i> Dashboard
           </a>
-          <a href="manager-movies.php" class="list-group-item list-group-item-action ">
+          <a href="manager-movies.php" class="list-group-item list-group-item-action">
             <i class="fas fa-film me-2"></i> Manage Movies
           </a>
           <a href="manager-reviews.php" class="list-group-item list-group-item-action active">
@@ -131,34 +132,48 @@
       </div>
     </div>
 
-<!-- Main Content -->
-<div class="main-content">
-  <h2 class="mb-4">Movie Reviews</h2>
+    <!-- Main Content -->
+    <div class="col-md-9 main-content">
+      <h2 class="mb-4">Movie Reviews</h2>
 
-  <!-- Review Card 1 -->
-  <div class="card mb-3">
-    <div class="card-body">
-      <h5 class="card-title">The Matrix</h5>
-      <p class="card-text">"An absolute sci-fi masterpiece. Mind-bending action and philosophy!"</p>
-      <small class="text-muted">— user123</small>
-      <div class="d-flex justify-content-end mt-2">
-        <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Delete</button>
+      <!-- Review Card 1 -->
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title"> The Dark Knight</h5>
+          <p class="card-text mb-1"><strong>Rating:</strong> ⭐⭐⭐⭐⭐</p>
+          <small class="text-muted">— by user123</small>
+          <div class="d-flex justify-content-end mt-2">
+            <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Delete</button>
+          </div>
+        </div>
       </div>
+
+      <!-- Review Card 2 -->
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Interstellar</h5>
+          <p class="card-text mb-1"><strong>Rating:</strong> ⭐⭐⭐⭐☆</p>
+          <small class="text-muted">— by spaceFan88</small>
+          <div class="d-flex justify-content-end mt-2">
+            <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Delete</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Review Card 3 -->
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title"> Avengers: Endgame</h5>
+          <p class="card-text mb-1"><strong>Rating:</strong> ⭐⭐⭐⭐⭐</p>
+          <small class="text-muted">— by marvelFan99</small>
+          <div class="d-flex justify-content-end mt-2">
+            <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Delete</button>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
-
-  <!-- Review Card 2 -->
-  <div class="card mb-3">
-    <div class="card-body">
-      <h5 class="card-title">Inception</h5>
-      <p class="card-text">"A thrilling dive into dreams within dreams. Nolan nailed it!"</p>
-      <small class="text-muted">— movieFan88</small>
-      <div class="d-flex justify-content-end mt-2">
-        <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Delete</button>
-      </div>
-    </div>
-  </div>
-
 </div>
 
 <!-- Bootstrap JS -->

@@ -9,6 +9,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- FontAwesome Icons -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
   <style>
     body {
       background-color: #121212;
@@ -116,7 +117,7 @@
       <div class="d-flex flex-column p-3">
         <h4 class="text-center text-white mb-4">Manager Menu</h4>
         <div class="list-group">
-          <a href="manager-dashboard.php" class="list-group-item list-group-item-action active">
+          <a href="admin-dashboard.php" class="list-group-item list-group-item-action active">
             <i class="fas fa-tachometer-alt me-2"></i> Dashboard
           </a>
           <a href="manager-movies.php" class="list-group-item list-group-item-action ">
@@ -131,10 +132,32 @@
         </div>
       </div>
     </div>
+
     <!-- Main Content -->
     <div class="col-md-9 main-content">
       <h2>Welcome, Manager</h2>
 
+      <!-- Stats Cards -->
+      <div class="row mt-4">
+        <div class="col-md-6 mb-3">
+          <div class="card bg-dark text-white text-center">
+            <div class="card-body">
+              <h5 class="card-title"><i class="fas fa-film me-2"></i> Total Movies</h5>
+              <p class="card-text fs-2" id="totalMovies">Loading...</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <div class="card bg-dark text-white text-center">
+            <div class="card-body">
+              <h5 class="card-title"><i class="fas fa-users me-2"></i> Total Users</h5>
+              <p class="card-text fs-2" id="totalUsers">Loading...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> <!-- End Main Content -->
+  </div>
 </div>
 
 <!-- Bootstrap JS -->

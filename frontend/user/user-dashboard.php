@@ -126,7 +126,7 @@
     </form>
     <ul class="navbar-nav align-items-center">
       <li class="nav-item">
-        <a class="nav-link" href="my-profile.html"><i class="fas fa-user"></i> My Profile</a>
+        <a class="nav-link" href="myprofile.php"><i class="fas fa-user"></i> My Profile</a>
       </li>
       <li class="nav-item">
         <a class="nav-link btn btn-outline-danger text-white px-3 ms-3" href="../index.php"><i class="fas fa-sign-out-alt"></i> Logout</a>

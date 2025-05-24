@@ -3,13 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin - Manage Users</title>
+  <title>Admin Dashboard - Movie Management System</title>
 
-  <!-- Bootstrap + FontAwesome -->
+  <!-- Bootstrap & Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-
-  <!-- SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <style>
@@ -60,30 +58,6 @@
       margin-left: 250px;
       padding: 20px;
     }
-    h2 {
-      font-weight: bold;
-    }
-    .btn-primary {
-      background-color: #007bff;
-      border-color: #007bff;
-    }
-    .btn-primary:hover {
-      background-color: #0056b3;
-      border-color: #004085;
-    }
-    .modal-content {
-      background-color: #1f1f1f;
-      color: #ffffff;
-    }
-    .modal-header {
-      border-bottom: 1px solid #444;
-    }
-    .table-responsive {
-      overflow-x: auto;
-    }
-    table {
-      min-width: 600px;
-    }
     .table-dark {
       background-color: #2d2d2d;
     }
@@ -91,13 +65,9 @@
     .table-dark th {
       border: 1px solid #444;
     }
-    .card {
-      border: none;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    }
-    .content {
-      padding: 20px;
+    .modal-content {
+      background-color: #1f1f1f;
+      color: #ffffff;
     }
   </style>
 </head>
@@ -110,16 +80,14 @@
     <div class="collapse navbar-collapse justify-content-end">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link" href="/MovieSite/frontend/index.php" id="logoutBtn">
-            <i class="fas fa-sign-out-alt"></i> Logout
-          </a>
+          <a class="nav-link" href="/MovieSite/frontend/index.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </li>
       </ul>
     </div>
   </div>
 </nav>
 
-<!-- Sidebar + Main Content -->
+<!-- Layout -->
 <div class="container-fluid">
   <div class="row">
     <!-- Sidebar -->
@@ -127,21 +95,11 @@
       <div class="d-flex flex-column p-3">
         <h4 class="text-center text-white mb-4">Admin Menu</h4>
         <div class="list-group">
-          <a href="admin-dashboard.php" class="list-group-item list-group-item-action">
-            <i class="fas fa-tachometer-alt me-2"></i> Dashboard
-          </a>
-          <a href="admin-users.php" class="list-group-item list-group-item-action active">
-            <i class="fas fa-users me-2"></i> Manage Users
-          </a>
-          <a href="admin-movies.php" class="list-group-item list-group-item-action">
-            <i class="fas fa-film me-2"></i> Manage Movies
-          </a>
-          <a href="admin-reviews.php" class="list-group-item list-group-item-action">
-            <i class="fas fa-comments me-2"></i> Movie Reviews
-          </a>
-          <a href="admin-reports.php" class="list-group-item list-group-item-action">
-            <i class="fas fa-chart-bar me-2"></i> Reports
-          </a>
+          <a href="admin-dashboard.php" class="list-group-item list-group-item-action "><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a>
+          <a href="admin-users.php" class="list-group-item list-group-item-action active"><i class="fas fa-users me-2"></i> Manage Users</a>
+          <a href="admin-movies.php" class="list-group-item list-group-item-action"><i class="fas fa-film me-2"></i> Manage Movies</a>
+          <a href="admin-reviews.php" class="list-group-item list-group-item-action"><i class="fas fa-comments me-2"></i> Movie Reviews</a>
+          <a href="admin-reports.php" class="list-group-item list-group-item-action"><i class="fas fa-chart-bar me-2"></i> Reports</a>
         </div>
       </div>
     </div>
@@ -149,175 +107,166 @@
     <!-- Main Content -->
     <div class="col-md-9 main-content">
       <h2 class="mb-4">Manage Users</h2>
-      <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#userModal" onclick="openAddUserModal()">
-        <i class="fas fa-plus me-1"></i> Add User
-      </button>
+      <button class="btn btn-primary mb-3" onclick="openAddUserModal()"><i class="fas fa-plus"></i> Add User</button>
 
-      <div class="table-responsive">
-        <table class="table table-dark table-hover">
-          <thead>
-            <tr>
-              <th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="userTableBody"></tbody>
-        </table>
-      </div>
+      <table class="table table-bordered table-dark table-striped table-hover">
+        <thead>
+          <tr>
+            <th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="userTableBody"></tbody>
+      </table>
     </div>
   </div>
 </div>
 
-<!-- User Modal -->
+<!-- Modal -->
 <div class="modal fade" id="userModal" tabindex="-1">
   <div class="modal-dialog">
-    <div class="modal-content text-white">
+    <div class="modal-content bg-secondary text-white">
       <div class="modal-header">
-        <h5 class="modal-title" id="modalTitle">Add User</h5>
+        <h5 class="modal-title" id="userModalTitle">Add User</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
-        <form id="userForm">
-          <input type="hidden" id="userId">
-          <div class="mb-3">
-            <label>Name</label>
-            <input type="text" class="form-control" id="name" required>
-          </div>
-          <div class="mb-3">
-            <label>Email</label>
-            <input type="email" class="form-control" id="email" required>
-          </div>
-          <div class="mb-3" id="passwordGroup">
-            <label>Password <span id="passwordHint" class="text-warning">(leave blank to keep current password)</span></label>
-            <input type="password" class="form-control" id="password" required>
-          </div>
-          <div class="mb-3">
-            <label>Role</label>
-            <select class="form-control" id="role">
-              <option value="0">Admin</option>
-              <option value="1">Manager</option>
-              <option value="2">User</option>
-            </select>
-          </div>
-          <button type="submit" class="btn btn-success w-100">Save</button>
-        </form>
+        <input type="hidden" id="userId">
+        <div class="mb-3"><label>Name</label><input type="text" id="name" class="form-control"></div>
+        <div class="mb-3"><label>Email</label><input type="email" id="email" class="form-control"></div>
+        <div class="mb-3"><label>Password</label><input type="password" id="password"  class="form-control"></div>
+        <div class="mb-3">
+          <label>Role</label>
+          <select id="role" class="form-control">
+            <option value="0">Admin</option>
+            <option value="1">Manager</option>
+            <option value="2">User</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="saveUser()">Save</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Bootstrap JS -->
+<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
-const apiUrl = 'http://localhost:8000/api/users';
+  var userModal = new bootstrap.Modal(document.getElementById('userModal'));
 
-function fetchUsers() {
-  fetch(apiUrl)
-    .then(res => res.json())
-    .then(data => {
-      const tbody = document.getElementById('userTableBody');
-      tbody.innerHTML = '';
-      data.forEach(user => {
-        tbody.innerHTML += `
-          <tr>
-            <td>${user.id}</td>
-            <td>${user.name}</td>
-            <td>${user.email}</td>
-            <td>${roleLabel(user.role)}</td>
-            <td>
-              <button class="btn btn-warning btn-sm" onclick='openEditUserModal(${JSON.stringify(user)})'>
-                <i class="fas fa-edit"></i>
-              </button>
-              <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </td>
-          </tr>`;
-      });
-    });
-}
-
-function roleLabel(role) {
-  return ['Admin', 'Manager', 'User'][role] || 'Unknown';
-}
-
-function openAddUserModal() {
-  document.getElementById('modalTitle').textContent = 'Add User';
-  document.getElementById('userForm').reset();
-  document.getElementById('userId').value = '';
-  document.getElementById('passwordGroup').style.display = 'block';
-  document.getElementById('password').required = true;
-  document.getElementById('passwordHint').textContent = "(3 maximum password required)";
-}
-
-function openEditUserModal(user) {
-  document.getElementById('modalTitle').textContent = 'Edit User';
-  document.getElementById('userId').value = user.id;
-  document.getElementById('name').value = user.name;
-  document.getElementById('email').value = user.email;
-  document.getElementById('role').value = user.role;
-  document.getElementById('password').value = '';
-  document.getElementById('passwordGroup').style.display = 'block';
-  document.getElementById('password').required = false;
-  document.getElementById('passwordHint').textContent = "(leave blank to keep current password)";
-  new bootstrap.Modal(document.getElementById('userModal')).show();
-}
-
-document.getElementById('userForm').addEventListener('submit', function(e) {
-  e.preventDefault();
-  const id = document.getElementById('userId').value;
-  const method = id ? 'PUT' : 'POST';
-  const url = id ? `${apiUrl}/${id}` : apiUrl;
-
-  const payload = {
-    name: document.getElementById('name').value,
-    email: document.getElementById('email').value,
-    role: parseInt(document.getElementById('role').value)
-  };
-  const password = document.getElementById('password').value.trim();
-  if (password) payload.password = password;
-
-  fetch(url, {
-    method: method,
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  })
-  .then(res => res.json())
-  .then(() => {
-    bootstrap.Modal.getInstance(document.getElementById('userModal')).hide();
-    fetchUsers();
-    Swal.fire({
-      icon: 'success',
-      title: id ? 'User Updated' : 'User Added',
-      showConfirmButton: false,
-      timer: 1500
-    });
-  });
-});
-
-function deleteUser(id) {
-  Swal.fire({
-    title: 'Are you sure?',
-    text: "You won't be able to revert this!",
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#d33',
-    cancelButtonColor: '#6c757d',
-    confirmButtonText: 'Yes, delete it!'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      fetch(`${apiUrl}/${id}`, { method: 'DELETE' })
-        .then(() => {
-          fetchUsers();
-          Swal.fire('Deleted!', 'User has been deleted.', 'success');
+  function fetchUsers() {
+    fetch('http://localhost:8000/api/users')
+      .then(res => res.json())
+      .then(data => {
+        var tbody = document.getElementById('userTableBody');
+        tbody.innerHTML = '';
+        data.forEach(function(user) {
+          var statusClass = user.suspended ? 'btn-success' : 'btn-secondary';
+          var statusText = user.suspended ? 'Activate' : 'Suspend';
+          tbody.innerHTML +=
+            '<tr>' +
+            '<td>' + user.id + '</td>' +
+            '<td>' + user.name + '</td>' +
+            '<td>' + user.email + '</td>' +
+            '<td>' + roleLabel(user.role) + '</td>' +
+            '<td>' + (user.suspended ? 'Suspended' : 'Active') + '</td>' +
+            '<td>' +
+            '<button class="btn btn-warning btn-sm" onclick=\'openEditUserModal(' + JSON.stringify(user) + ')\'><i class="fas fa-edit"></i></button> ' +
+            '<button class="btn btn-danger btn-sm" onclick="deleteUser(' + user.id + ')"><i class="fas fa-trash"></i></button> ' +
+            '<button class="btn ' + statusClass + ' btn-sm" onclick="toggleStatus(' + user.id + ')"><i class="fas fa-user-lock"></i> ' + statusText + '</button>' +
+            '</td>' +
+            '</tr>';
         });
+      });
+  }
+
+  function roleLabel(role) {
+    return role == 0 ? 'Admin' : role == 1 ? 'Manager' : 'User';
+  }
+
+  function openAddUserModal() {
+    document.getElementById('userId').value = '';
+    document.getElementById('name').value = '';
+    document.getElementById('email').value = '';
+    document.getElementById('password').value = '';
+    document.getElementById('role').value = '2';
+    document.getElementById('userModalTitle').innerText = 'Add User';
+    userModal.show();
+  }
+
+  function openEditUserModal(user) {
+    document.getElementById('userId').value = user.id;
+    document.getElementById('name').value = user.name;
+    document.getElementById('email').value = user.email;
+    document.getElementById('role').value = user.role;
+    document.getElementById('password').value = '';
+    document.getElementById('userModalTitle').innerText = 'Edit User';
+    userModal.show();
+  }
+
+  function saveUser() {
+    var id = document.getElementById('userId').value;
+    var name = document.getElementById('name').value;
+    var email = document.getElementById('email').value;
+    var password = document.getElementById('password').value;
+    var role = document.getElementById('role').value;
+
+    var data = { name: name, email: email, role: role };
+    if (!id && password) {
+      data.password = password;
+    } else if(id && password) {
+      // Include password on edit only if it's filled (for updating password)
+      data.password = password;
     }
-  });
-}
 
-// Initial fetch
-fetchUsers();
+    var url = id ? ('http://localhost:8000/api/users/' + id) : 'http://localhost:8000/api/users';
+    var method = id ? 'PUT' : 'POST';
+
+    fetch(url, {
+      method: method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(function() {
+      userModal.hide();
+      fetchUsers();
+      Swal.fire('Success', 'User ' + (id ? 'updated' : 'created') + ' successfully.', 'success');
+    });
+  }
+
+  function deleteUser(id) {
+    Swal.fire({
+      title: 'Delete this user?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete'
+    }).then(function(result) {
+      if (result.isConfirmed) {
+        fetch('http://localhost:8000/api/users/' + id, { method: 'DELETE' })
+          .then(res => res.json())
+          .then(function() {
+            fetchUsers();
+            Swal.fire('Deleted!', 'User has been deleted.', 'success');
+          });
+      }
+    });
+  }
+
+  function toggleStatus(id) {
+    fetch('http://localhost:8000/api/users/' + id + '/toggle-status', { method: 'PUT' })
+      .then(res => res.json())
+      .then(function() {
+        fetchUsers();
+       Swal.fire('Success', 'User status updated successfully.', 'success');
+      });
+ 
+  }
+
+  // Load users on page load
+  document.addEventListener('DOMContentLoaded', fetchUsers);
 </script>
-
 </body>
 </html>

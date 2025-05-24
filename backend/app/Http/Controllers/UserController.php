@@ -86,4 +86,18 @@ class UserController extends Controller
     {
         return response()->json(['message' => 'User Dashboard Accessed']);
     }
+
+
+    //Account suspension and activation
+    public function toggleStatus($id)
+{
+    $user = User::findOrFail($id);
+    $user->suspended = !$user->suspended;
+    $user->save();
+
+    return response()->json([
+        'message' => $user->suspended ? 'User suspended.' : 'User activated.',
+        'status' => $user->suspended
+    ]);
+}
 }

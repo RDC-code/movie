@@ -6,12 +6,23 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MovieController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\ReviewController;
+
+Route::put('/users/{id}/toggle-status', [UserController::class, 'toggleStatus']);
 
 
+Route::get('/reviews', [ReviewController::class, 'index']);
+    Route::post('/reviews', [ReviewController::class, 'store']);
+    Route::delete('/reviews/{id}', [ReviewController::class, 'destroy']);
 
 
-  Route::get('/profile', [UserProfileController::class, 'profile']);
-    Route::post('/update-password', [UserProfileController::class, 'updatePassword']);
+Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail']);
+
+Route::get('/profile', [UserController::class, 'profile']);
+Route::post('/update-password', [UserController::class, 'updatePassword']);
+
+
 
 
 

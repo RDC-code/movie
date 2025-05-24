@@ -3,16 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Manager Dashboard - Movie Management System</title>
+  <title>Admin Dashboard - Movie Management System</title>
 
-  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- FontAwesome Icons -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-  <!-- SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  <style>
+ <style>
     body {
       background-color: #121212;
       color: #ffffff;
@@ -104,7 +101,7 @@
     <div class="collapse navbar-collapse justify-content-end">
       <ul class="navbar-nav">
         <li class="nav-item">
-        <a class="nav-link" href="/MovieSite/frontend/index.php" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+          <a class="nav-link" href="/MovieSite/frontend/index.php" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </li>
       </ul>
     </div>
@@ -119,32 +116,28 @@
       <div class="d-flex flex-column p-3">
         <h4 class="text-center text-white mb-4">Manager Menu</h4>
         <div class="list-group">
-          <a href="manager-dashboard.php" class="list-group-item list-group-item-action">
-            <i class="fas fa-tachometer-alt me-2"></i> Dashboard
-          </a>
-          <a href="manager-movies.php" class="list-group-item list-group-item-action active">
-            <i class="fas fa-film me-2"></i> Manage Movies
-          </a>
-          <a href="manager-reviews.php" class="list-group-item list-group-item-action">
-            <i class="fas fa-comments me-2"></i> Movie Reviews
-          </a>
-          <a href="manager-reports.php" class="list-group-item list-group-item-action">
-            <i class="fas fa-chart-bar me-2"></i> Reports
-          </a>
+          <a href="manager-dashboard.php" class="list-group-item list-group-item-action"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a>
+          <a href="manager-movies.php" class="list-group-item list-group-item-action active"><i class="fas fa-film me-2"></i> Manage Movies</a>
+          <a href="manager-reviews.php" class="list-group-item list-group-item-action"><i class="fas fa-comments me-2"></i> Movie Reviews</a>
+          <a href="manager-reports.php" class="list-group-item list-group-item-action"><i class="fas fa-chart-bar me-2"></i> Reports</a>
         </div>
       </div>
     </div>
 
     <!-- Main Content -->
-    <div class="col-md-9 offset-md-3 main-content">
+    <div class="col-md-9 main-content">
       <h2>Manage Movies</h2>
-      <button class="btn btn-primary mb-3" onclick="openAddModal()">Add Movie</button>
+      <div class="mb-3 d-flex justify-content-between">
+        <button class="btn btn-primary" onclick="openAddModal()">Add Movie</button>
+        <button class="btn btn-secondary" onclick="printMovies()"><i class="fas fa-print me-1"></i> Print Movies</button>
+      </div>
       <table class="table table-bordered table-dark table-striped" id="movieTable">
         <thead>
           <tr>
             <th>Thumbnail</th>
             <th>Title</th>
             <th>Description</th>
+            <th>Link</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -175,6 +168,10 @@
             <textarea class="form-control" name="description" id="description"></textarea>
           </div>
           <div class="mb-3">
+            <label>Link (YouTube/IMDb/etc.)</label>
+            <input type="url" class="form-control" name="link" id="link" placeholder="https://example.com" required>
+          </div>
+          <div class="mb-3">
             <label>Thumbnail</label>
             <input type="file" class="form-control" name="thumbnail" id="thumbnail">
             <img id="previewImage" src="" class="mt-2" width="100" hidden>
@@ -192,14 +189,12 @@
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-
-  const apiBase = 'http://localhost:8000/api/movies';
   const movieTableBody = document.querySelector("#movieTable tbody");
   const movieForm = document.getElementById("movieForm");
   const modal = new bootstrap.Modal(document.getElementById("movieModal"));
 
   function fetchMovies() {
-    fetch(apiBase)
+    fetch("http://localhost:8000/api/movies")
       .then(res => res.json())
       .then(movies => {
         movieTableBody.innerHTML = "";
@@ -209,11 +204,12 @@
               <td><img src="http://localhost:8000/storage/${movie.thumbnail}" width="80" /></td>
               <td>${movie.title}</td>
               <td>${movie.description || ''}</td>
+              <td><a href="${movie.link}" target="_blank">Visit</a></td>
               <td>
                 <button class="btn btn-sm btn-warning" onclick='editMovie(${JSON.stringify(movie)})'>Edit</button>
                 <button class="btn btn-sm btn-danger" onclick='deleteMovie(${movie.id})'>Delete</button>
               </td>
-            </tr>`; 
+            </tr>`;
         });
       });
   }
@@ -230,6 +226,7 @@
     document.getElementById("movieId").value = movie.id;
     document.getElementById("title").value = movie.title;
     document.getElementById("description").value = movie.description;
+    document.getElementById("link").value = movie.link;
     document.getElementById("existingThumbnail").value = movie.thumbnail;
     const img = document.getElementById("previewImage");
     img.src = `http://localhost:8000/storage/${movie.thumbnail}`;
@@ -241,7 +238,9 @@
     e.preventDefault();
     const formData = new FormData(movieForm);
     const movieId = formData.get("movieId");
-    const url = movieId ? `${apiBase}/${movieId}` : apiBase;
+    const url = movieId
+      ? `http://localhost:8000/api/movies/${movieId}`
+      : "http://localhost:8000/api/movies";
 
     fetch(url, {
       method: "POST",
@@ -251,36 +250,100 @@
     .then(() => {
       modal.hide();
       fetchMovies();
-      Swal.fire('Success!', 'Movie saved successfully!', 'success');
-    }).catch(() => {
-      Swal.fire('Error!', 'Something went wrong!', 'error');
+      Swal.fire({
+        icon: 'success',
+        title: movieId ? 'Movie Updated!' : 'Movie Added!',
+        text: 'The movie has been saved successfully.',
+        timer: 2000,
+        showConfirmButton: false
+      });
     });
   });
 
   function deleteMovie(id) {
     Swal.fire({
       title: 'Are you sure?',
-      text: "You won't be able to revert this!",
+      text: 'This movie will be permanently deleted.',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'No, keep it'
-    }).then((result) => {
+    }).then(result => {
       if (result.isConfirmed) {
-        fetch(`${apiBase}/${id}`, {
-          method: "DELETE"
-        })
-        .then(res => res.json())
-        .then(() => {
-          fetchMovies();
-          Swal.fire('Deleted!', 'Your movie has been deleted.', 'success');
-        }).catch(() => {
-          Swal.fire('Error!', 'Something went wrong!', 'error');
-        });
+        fetch(`http://localhost:8000/api/movies/${id}`, { method: 'DELETE' })
+          .then(() => {
+            fetchMovies();
+            Swal.fire('Deleted!', 'The movie has been deleted.', 'success');
+          });
       }
     });
   }
 
+  function printMovies() {
+    fetch("http://localhost:8000/api/movies")
+      .then(res => res.json())
+      .then(movieData => {
+        let printWindow = window.open('', '', 'height=800,width=1000');
+        let html = `
+          <html>
+            <head>
+              <title>Print Movies</title>
+              <style>
+                body { font-family: Arial, sans-serif; padding: 20px; }
+                h2 { text-align: center; }
+                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                th, td { border: 1px solid #000; padding: 8px; text-align: left; }
+                img { width: 80px; }
+              </style>
+            </head>
+            <body>
+              <h2>Movie List</h2>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${movieData.map(movie => `
+                    <tr>
+                      <td>${movie.title}</td>
+                      <td>${movie.description || ''}</td>
+                    </tr>`).join('')}
+                </tbody>
+              </table>
+            </body>
+          </html>`;
+        printWindow.document.write(html);
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();
+        printWindow.close();
+      })
+      .catch(err => {
+        alert("Failed to fetch movies for printing.");
+        console.error(err);
+      });
+  }
+
+  // Preview thumbnail on file select
+  document.getElementById("thumbnail").addEventListener("change", function() {
+    const preview = document.getElementById("previewImage");
+    const file = this.files[0];
+    if(file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        preview.src = e.target.result;
+        preview.hidden = false;
+      };
+      reader.readAsDataURL(file);
+    } else {
+      preview.src = "";
+      preview.hidden = true;
+    }
+  });
+
+  // Initial load
   fetchMovies();
 </script>
 

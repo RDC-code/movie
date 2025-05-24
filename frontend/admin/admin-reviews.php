@@ -8,6 +8,7 @@
   <!-- Bootstrap + FontAwesome -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
   <style>
     body {
       background-color: #121212;
@@ -120,6 +121,7 @@
           </a>
           <a href="admin-users.php" class="list-group-item list-group-item-action">
             <i class="fas fa-users me-2"></i> Manage Users</a>
+
           <a href="admin-movies.php" class="list-group-item list-group-item-action">
             <i class="fas fa-film me-2"></i> Manage Movies
           </a>
@@ -137,61 +139,47 @@
     <div class="col-md-9 main-content">
       <h2 class="mb-4">Movie Reviews</h2>
 
-      <div id="reviewList"></div>
+      <!-- Review Card 1 -->
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title"> The Dark Knight</h5>
+          <p class="card-text mb-1"><strong>Rating:</strong> ⭐⭐⭐⭐⭐</p>
+          <small class="text-muted">— by user123</small>
+          <div class="d-flex justify-content-end mt-2">
+            <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Delete</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Review Card 2 -->
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Interstellar</h5>
+          <p class="card-text mb-1"><strong>Rating:</strong> ⭐⭐⭐⭐☆</p>
+          <small class="text-muted">— by spaceFan88</small>
+          <div class="d-flex justify-content-end mt-2">
+            <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Delete</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Review Card 3 -->
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title"> Avengers: Endgame</h5>
+          <p class="card-text mb-1"><strong>Rating:</strong> ⭐⭐⭐⭐⭐</p>
+          <small class="text-muted">— by marvelFan99</small>
+          <div class="d-flex justify-content-end mt-2">
+            <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Delete</button>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- Script to Fetch and Delete Reviews -->
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    fetch('/api/reviews')
-      .then(res => res.json())
-      .then(data => {
-        const container = document.getElementById("reviewList");
-        container.innerHTML = '';
-        data.forEach(review => {
-          const stars = '<i class="fas fa-star"></i>'.repeat(Math.floor(review.rating)) +
-                        (review.rating % 1 ? '<i class="fas fa-star-half-alt"></i>' : '');
-          const card = `
-            <div class="card mb-3">
-              <div class="card-body">
-                <h5 class="card-title">${review.movie_title}</h5>
-                <div class="text-warning mb-2">${stars}</div>
-                <small class="text-muted">— ${review.username}</small>
-                <div class="d-flex justify-content-end mt-2">
-                  <button class="btn btn-danger btn-sm delete-review" data-id="${review.id}">
-                    <i class="fas fa-trash-alt"></i> Delete
-                  </button>
-                </div>
-              </div>
-            </div>`;
-          container.insertAdjacentHTML('beforeend', card);
-        });
-
-        document.querySelectorAll('.delete-review').forEach(btn => {
-          btn.addEventListener('click', function () {
-            const id = this.dataset.id;
-            if (confirm("Are you sure you want to delete this review?")) {
-              fetch(`/api/reviews/${id}`, {
-                method: 'DELETE',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${localStorage.getItem('token')}`
-                }
-              })
-              .then(res => res.json())
-              .then(() => location.reload())
-              .catch(err => alert("Failed to delete review."));
-            }
-          });
-        });
-      });
-  });
-</script>
-
 </body>
 </html>
