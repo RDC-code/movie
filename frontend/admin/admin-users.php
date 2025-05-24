@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin Dashboard - Movie Management System</title>
+  <title>Admin Users - Movie Management System</title>
 
   <!-- Bootstrap & Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -95,7 +95,7 @@
       <div class="d-flex flex-column p-3">
         <h4 class="text-center text-white mb-4">Admin Menu</h4>
         <div class="list-group">
-          <a href="admin-dashboard.php" class="list-group-item list-group-item-action "><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a>
+          <a href="admin-dashboard.php" class="list-group-item list-group-item-action"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a>
           <a href="admin-users.php" class="list-group-item list-group-item-action active"><i class="fas fa-users me-2"></i> Manage Users</a>
           <a href="admin-movies.php" class="list-group-item list-group-item-action"><i class="fas fa-film me-2"></i> Manage Movies</a>
           <a href="admin-reviews.php" class="list-group-item list-group-item-action"><i class="fas fa-comments me-2"></i> Movie Reviews</a>
@@ -106,7 +106,7 @@
 
     <!-- Main Content -->
     <div class="col-md-9 main-content">
-      <h2 class="mb-4">Manage Users</h2>
+      <h1>Manage Users</h1>
       <button class="btn btn-primary mb-3" onclick="openAddUserModal()"><i class="fas fa-plus"></i> Add User</button>
 
       <table class="table table-bordered table-dark table-striped table-hover">
@@ -139,7 +139,7 @@
           <select id="role" class="form-control">
             <option value="0">Admin</option>
             <option value="1">Manager</option>
-            <option value="2">User</option>
+            <option value="2" selected>User</option>
           </select>
         </div>
       </div>
@@ -160,24 +160,25 @@
     fetch('http://localhost:8000/api/users')
       .then(res => res.json())
       .then(data => {
-        var tbody = document.getElementById('userTableBody');
+        const tbody = document.getElementById('userTableBody');
         tbody.innerHTML = '';
-        data.forEach(function(user) {
-          var statusClass = user.suspended ? 'btn-success' : 'btn-secondary';
-          var statusText = user.suspended ? 'Activate' : 'Suspend';
-          tbody.innerHTML +=
-            '<tr>' +
-            '<td>' + user.id + '</td>' +
-            '<td>' + user.name + '</td>' +
-            '<td>' + user.email + '</td>' +
-            '<td>' + roleLabel(user.role) + '</td>' +
-            '<td>' + (user.suspended ? 'Suspended' : 'Active') + '</td>' +
-            '<td>' +
-            '<button class="btn btn-warning btn-sm" onclick=\'openEditUserModal(' + JSON.stringify(user) + ')\'><i class="fas fa-edit"></i></button> ' +
-            '<button class="btn btn-danger btn-sm" onclick="deleteUser(' + user.id + ')"><i class="fas fa-trash"></i></button> ' +
-            '<button class="btn ' + statusClass + ' btn-sm" onclick="toggleStatus(' + user.id + ')"><i class="fas fa-user-lock"></i> ' + statusText + '</button>' +
-            '</td>' +
-            '</tr>';
+        data.forEach(user => {
+          const statusClass = user.suspended ? 'btn-success' : 'btn-secondary';
+          const statusText = user.suspended ? 'Activate' : 'Suspend';
+          tbody.innerHTML += `
+            <tr>
+              <td>${user.id}</td>
+              <td>${user.name}</td>
+              <td>${user.email}</td>
+              <td>${roleLabel(user.role)}</td>
+              <td>${user.suspended ? 'Suspended' : 'Active'}</td>
+              <td>
+                <button class="btn btn-warning btn-sm" onclick='openEditUserModal(${JSON.stringify(user)})'><i class="fas fa-edit"></i></button>
+                <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id})"><i class="fas fa-trash"></i></button>
+                <button class="btn ${statusClass} btn-sm" onclick="toggleStatus(${user.id})"><i class="fas fa-user-lock"></i> ${statusText}</button>
+              </td>
+            </tr>
+          `;
         });
       });
   }
@@ -206,35 +207,51 @@
     userModal.show();
   }
 
-  function saveUser() {
-    var id = document.getElementById('userId').value;
-    var name = document.getElementById('name').value;
-    var email = document.getElementById('email').value;
-    var password = document.getElementById('password').value;
-    var role = document.getElementById('role').value;
-
-    var data = { name: name, email: email, role: role };
-    if (!id && password) {
-      data.password = password;
-    } else if(id && password) {
-      // Include password on edit only if it's filled (for updating password)
-      data.password = password;
-    }
-
-    var url = id ? ('http://localhost:8000/api/users/' + id) : 'http://localhost:8000/api/users';
-    var method = id ? 'PUT' : 'POST';
-
-    fetch(url, {
-      method: method,
+  function createUser(data) {
+    fetch('http://localhost:8000/api/users', {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     })
     .then(res => res.json())
-    .then(function() {
+    .then(() => {
       userModal.hide();
       fetchUsers();
-      Swal.fire('Success', 'User ' + (id ? 'updated' : 'created') + ' successfully.', 'success');
+      Swal.fire('Success', 'User created successfully.', 'success');
     });
+  }
+
+  function updateUser(id, data) {
+    fetch(`http://localhost:8000/api/users/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(() => {
+      userModal.hide();
+      fetchUsers();
+      Swal.fire('Success', 'User updated successfully.', 'success');
+    });
+  }
+
+  function saveUser() {
+    const id = document.getElementById('userId').value;
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const role = document.getElementById('role').value;
+
+    const data = { name, email, role };
+    if (password) {
+      data.password = password;
+    }
+
+    if (!id) {
+      createUser(data);
+    } else {
+      updateUser(id, data);
+    }
   }
 
   function deleteUser(id) {
@@ -243,11 +260,11 @@
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Yes, delete'
-    }).then(function(result) {
+    }).then(result => {
       if (result.isConfirmed) {
-        fetch('http://localhost:8000/api/users/' + id, { method: 'DELETE' })
+        fetch(`http://localhost:8000/api/users/${id}`, { method: 'DELETE' })
           .then(res => res.json())
-          .then(function() {
+          .then(() => {
             fetchUsers();
             Swal.fire('Deleted!', 'User has been deleted.', 'success');
           });
@@ -256,13 +273,12 @@
   }
 
   function toggleStatus(id) {
-    fetch('http://localhost:8000/api/users/' + id + '/toggle-status', { method: 'PUT' })
+    fetch(`http://localhost:8000/api/users/${id}/toggle-status`, { method: 'PUT' })
       .then(res => res.json())
-      .then(function() {
+      .then(() => {
         fetchUsers();
-       Swal.fire('Success', 'User status updated successfully.', 'success');
+        Swal.fire('Success', 'User status updated successfully.', 'success');
       });
- 
   }
 
   // Load users on page load

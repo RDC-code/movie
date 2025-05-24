@@ -27,7 +27,7 @@ class MovieController extends Controller
             'title' => 'required|string',
             'description' => 'nullable|string',
             'link' => 'nullable|url',
-            'thumbnail' => 'nullable|mimes:jpeg,jpg,png|image|max:20480'
+            'thumbnail' => 'nullable|mimes:jpeg,jpg,png|image|max:20480', 
         ]);
 
         if ($request->hasFile('thumbnail')) {

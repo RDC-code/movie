@@ -10,21 +10,20 @@ class UserController extends Controller
 {
     
 
-    // Authenticated user's profile
-    public function profile(Request $request)
-    {
-        $user = $request->user(); // Authenticated user
+public function profile(Request $request)
+{
+    $user = $request->user(); // Authenticated user
 
-        return response()->json([
-            'username' => $user->username,
-            'email' => $user->email,
-            'role' => match ($user->role) {
-                0 => 'Admin',
-                1 => 'Manager',
-                default => 'User',
-            }
-        ]);
-    }
+    return response()->json([
+        'username' => $user->username,
+        'email' => $user->email,
+        'role' => match ($user->role) {
+            0 => 'Admin',
+            1 => 'Manager',
+            default => 'User',
+        }
+    ]);
+}
 
     // Get all users
     public function users()

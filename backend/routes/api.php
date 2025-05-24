@@ -7,14 +7,16 @@ use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
-use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\DashboardController;
 
+//DASHBOARD
+Route::get('/public-dashboard', [DashboardController::class, 'index']);
+
+
+//STATUS
 Route::put('/users/{id}/toggle-status', [UserController::class, 'toggleStatus']);
 
 
-Route::get('/reviews', [ReviewController::class, 'index']);
-    Route::post('/reviews', [ReviewController::class, 'store']);
-    Route::delete('/reviews/{id}', [ReviewController::class, 'destroy']);
 
 
 Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail']);
@@ -26,35 +28,22 @@ Route::post('/update-password', [UserController::class, 'updatePassword']);
 
 
 
-Route::get('/public-dashboard', function () {
-    return response()->json([
-        'total_movies' => \App\Models\Movie::count(),
-        'total_users' => \App\Models\User::count(),
-    ]);
-});
-
-
-Route::middleware('auth:sanctum')->group(function () {
-    // Fetch reviews for a specific movie
-    Route::get('movies/{movieId}/reviews', [ReviewController::class, 'getMovieReviews']);
-    
-    // Store a new review
-    Route::post('reviews', [ReviewController::class, 'store']);
-});
 
 
 
-// Public Routes
+
+
+// LOGIN & REGISTER
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-// Public Movie APIs
+// MOVIE API Routes
 Route::get('/movies', [MovieController::class, 'index']);
 Route::post('/movies', [MovieController::class, 'store']);
 Route::post('/movies/{id}', [MovieController::class, 'update']);
 Route::delete('/movies/{id}', [MovieController::class, 'destroy']);
 
-// User Routes with auth:sanctum
+// USER ROUTES
 
     Route::get('/users', [UserController::class, 'users']);
     Route::post('/users', [UserController::class, 'store']);
@@ -62,7 +51,6 @@ Route::delete('/movies/{id}', [MovieController::class, 'destroy']);
     Route::put('/users/{id}', [UserController::class, 'update']);
     Route::delete('/users/{id}', [UserController::class, 'delete']);
 
-    Route::get('/user/profile', [UserController::class, 'profile']); // for logged in user info
 
 
 // Role Middleware

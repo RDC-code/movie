@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin Dashboard - Movie Management System</title>
+  <title>Admin Movies - Movie Management System</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
@@ -90,8 +90,6 @@
     .content {
       padding: 20px;
     }
-
-    
   </style>
 </head>
 <body>
@@ -129,7 +127,7 @@
 
     <!-- Main Content -->
     <div class="col-md-9 main-content">
-      <h2>Manage Movies</h2>
+      <h1>Manage Movies</h1>
       <div class="mb-3 d-flex justify-content-between">
         <button class="btn btn-primary" onclick="openAddModal()">Add Movie</button>
         <button class="btn btn-secondary" onclick="printMovies()"><i class="fas fa-print me-1"></i> Print Movies</button>
@@ -196,6 +194,7 @@
   const movieForm = document.getElementById("movieForm");
   const modal = new bootstrap.Modal(document.getElementById("movieModal"));
 
+  // Fetch all movies (GET)
   function fetchMovies() {
     fetch("http://localhost:8000/api/movies")
       .then(res => res.json())
@@ -217,6 +216,7 @@
       });
   }
 
+  // Open modal for adding new movie
   function openAddModal() {
     movieForm.reset();
     document.getElementById("movieId").value = "";
@@ -225,6 +225,7 @@
     modal.show();
   }
 
+  // Fill modal with movie data for editing
   function editMovie(movie) {
     document.getElementById("movieId").value = movie.id;
     document.getElementById("title").value = movie.title;
@@ -237,15 +238,9 @@
     modal.show();
   }
 
-  movieForm.addEventListener("submit", function(e) {
-    e.preventDefault();
-    const formData = new FormData(movieForm);
-    const movieId = formData.get("movieId");
-    const url = movieId
-      ? `http://localhost:8000/api/movies/${movieId}`
-      : "http://localhost:8000/api/movies";
-
-    fetch(url, {
+  // Add a new movie (POST)
+  function addMovie(formData) {
+    fetch("http://localhost:8000/api/movies", {
       method: "POST",
       body: formData
     })
@@ -255,14 +250,35 @@
       fetchMovies();
       Swal.fire({
         icon: 'success',
-        title: movieId ? 'Movie Updated!' : 'Movie Added!',
+        title: 'Movie Added!',
         text: 'The movie has been saved successfully.',
         timer: 2000,
         showConfirmButton: false
       });
     });
-  });
+  }
 
+  // Update existing movie (POST to /movies/:id)
+  function updateMovie(movieId, formData) {
+    fetch(`http://localhost:8000/api/movies/${movieId}`, {
+      method: "POST",
+      body: formData
+    })
+    .then(res => res.json())
+    .then(() => {
+      modal.hide();
+      fetchMovies();
+      Swal.fire({
+        icon: 'success',
+        title: 'Movie Updated!',
+        text: 'The movie has been saved successfully.',
+        timer: 2000,
+        showConfirmButton: false
+      });
+    });
+  }
+
+  // Delete movie by ID (DELETE)
   function deleteMovie(id) {
     Swal.fire({
       title: 'Are you sure?',
@@ -281,6 +297,7 @@
     });
   }
 
+  // Print movies list
   function printMovies() {
     fetch("http://localhost:8000/api/movies")
       .then(res => res.json())
@@ -329,7 +346,7 @@
       });
   }
 
-  // Preview thumbnail on file select
+  // Preview thumbnail image on file select
   document.getElementById("thumbnail").addEventListener("change", function() {
     const preview = document.getElementById("previewImage");
     const file = this.files[0];
@@ -343,6 +360,18 @@
     } else {
       preview.src = "";
       preview.hidden = true;
+    }
+  });
+
+  // Handle form submit (calls add or update based on presence of movieId)
+  movieForm.addEventListener("submit", function(e) {
+    e.preventDefault();
+    const formData = new FormData(movieForm);
+    const movieId = formData.get("movieId");
+    if (movieId) {
+      updateMovie(movieId, formData);
+    } else {
+      addMovie(formData);
     }
   });
 

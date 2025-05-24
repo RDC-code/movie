@@ -1,105 +1,251 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>R.Movie - Login/Register</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    rel="stylesheet"
+  />
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <style>
-    body {
-      background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1607082349560-18f3b0948b2b') no-repeat center center fixed;
+    body,
+    html {
+      height: 100%;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(
+          rgba(0, 0, 0, 0.85),
+          rgba(0, 0, 0, 0.85)
+        ),
+        url('https://images.unsplash.com/photo-1607082349560-18f3b0948b2b?auto=format&fit=crop&w=1920&q=80')
+          no-repeat center center fixed;
       background-size: cover;
-      font-family: 'Segoe UI', sans-serif;
-    }
-    .form-container {
-      background-color: rgba(0, 0, 0, 0.8);
-      padding: 2rem;
-      border-radius: 15px;
       color: white;
-      max-width: 400px;
-      margin: auto;
-      margin-top: 5%;
-      box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
+
+    /* Back to homepage button */
+    .back-home-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
+      background-color: #ff4444;
+      border: none;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 0 10px #ff4444aa;
+      transition: background-color 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+
+    .back-home-btn:hover {
+      background-color: #cc3737;
+      text-decoration: none;
+      color: white;
+    }
+
+    /* Center form wrapper horizontally and vertically with some padding */
+    .form-wrapper {
+      flex: 1 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem 1rem;
+      width: 100%;
+      position: relative;
+    }
+
+    /* Form container styling */
+    .form-container {
+      background-color: rgba(20, 20, 20, 0.85);
+      padding: 2.5rem 2rem;
+      border-radius: 15px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 0 20px #ff4444aa;
+      transition: opacity 0.3s ease-in-out;
+      color: white;
+    }
+
+    /* Smooth fade effect for showing/hiding forms */
+    .form-container.d-none {
+      opacity: 0;
+      height: 0;
+      overflow: hidden;
+      pointer-events: none;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .form-container:not(.d-none) {
+      opacity: 1;
+      height: auto;
+      position: relative;
+      transform: none;
+    }
+
     .form-container h2 {
       text-align: center;
       margin-bottom: 1.5rem;
       color: #ff4444;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
     }
+
+    .form-control {
+      background-color: #222 !important;
+      border: none !important;
+      color: white !important;
+    }
+
     .form-control::placeholder {
-      color: rgba(255,255,255,0.6);
+      color: rgba(255, 255, 255, 0.6);
     }
+
     .form-switch label {
       color: #ccc;
+      font-weight: 500;
+      cursor: pointer;
     }
+
     .btn-danger {
+      background-color: #ff4444;
+      border: none;
       width: 100%;
+      font-weight: 600;
+      padding: 0.6rem 0;
+      font-size: 1.1rem;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-danger:hover {
+      background-color: #cc3737;
+    }
+
+    @media (max-width: 480px) {
+      .form-wrapper {
+        padding: 1.5rem 1rem;
+      }
+      .form-container {
+        padding: 2rem 1.5rem;
+      }
     }
   </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-black">
-  <div class="container">
-    <a class="navbar-brand" href="index.php">R.Movies</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-  
+
+  <a href="index.php" class="back-home-btn" aria-label="Back to homepage">
+    <i class="fas fa-arrow-left"></i> Back to Homepage
+  </a>
+
+  <div class="form-wrapper">
+    <!-- Login Form -->
+    <div class="form-container" id="loginForm">
+      <h2>R.Movies | Login</h2>
+      <form>
+        <div class="mb-3">
+          <label for="loginEmail" class="form-label">Email</label>
+          <input
+            type="email"
+            class="form-control"
+            id="loginEmail"
+            placeholder="Enter your email here"
+          />
+        </div>
+        <div class="mb-3">
+          <label for="loginPassword" class="form-label">Password</label>
+          <input
+            type="password"
+            class="form-control"
+            id="loginPassword"
+            placeholder="Enter your password here"
+          />
+        </div>
+        <button type="submit" class="btn btn-danger">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </button>
+        <div class="form-switch mt-3 text-center">
+          <input class="form-check-input" type="checkbox" id="toggleRegister" />
+          <label class="form-check-label" for="toggleRegister"
+            >New here? Register instead</label
+          >
+        </div>
+      </form>
     </div>
-  </div>
-</nav>
 
-  <div class="form-container" id="loginForm">
-    <h2>R.Movies | Login </h2>
-    <form>
-      <div class="mb-3">
-        <label for="loginEmail" class="form-label">Email</label>
-        <input type="email" class="form-control bg-dark text-white" id="loginEmail" placeholder="Enter your email here">
-      </div>
-      <div class="mb-3">
-        <label for="loginPassword" class="form-label">Password</label>
-        <input type="password" class="form-control bg-dark text-white" id="loginPassword" placeholder="Enter your password here">
-      </div>
-      <button type="submit" class="btn btn-danger"><i class="fas fa-sign-in-alt"></i> Login</button>
-      <div class="form-switch mt-3 text-center">
-        <input class="form-check-input" type="checkbox" id="toggleRegister">
-        <label class="form-check-label" for="toggleRegister">New here? Register instead</label>
-      </div>
-    </form>
-  </div>
-
-  <div class="form-container d-none" id="registerForm">
-     <h2>R.Movies | Register </h2>
-    <form>
-      <div class="mb-3">
-        <label for="regUsername" class="form-label">Username</label>
-        <input type="text" class="form-control bg-dark text-white" id="regUsername" placeholder="Enter username">
-      </div>
-      <div class="mb-3">
-        <label for="regEmail" class="form-label">Email</label>
-        <input type="email" class="form-control bg-dark text-white" id="regEmail" placeholder="user@example.com">
-      </div>
-      <div class="mb-3">
-        <label for="regPassword" class="form-label">Password</label>
-        <input type="password" class="form-control bg-dark text-white" id="regPassword" placeholder="Create password">
-      </div>
-      <button type="submit" class="btn btn-danger"><i class="fas fa-user-check"></i> Register</button>
-      <div class="form-switch mt-3 text-center">
-        <input class="form-check-input" type="checkbox" id="toggleLogin">
-        <label class="form-check-label" for="toggleLogin">Already have an account? Login instead</label>
-      </div>
-    </form>
+    <!-- Register Form -->
+    <div class="form-container d-none" id="registerForm">
+      <h2>R.Movies | Register</h2>
+      <form>
+        <div class="mb-3">
+          <label for="regUsername" class="form-label">Username</label>
+          <input
+            type="text"
+            class="form-control"
+            id="regUsername"
+            placeholder="Enter username"
+          />
+        </div>
+        <div class="mb-3">
+          <label for="regEmail" class="form-label">Email</label>
+          <input
+            type="email"
+            class="form-control"
+            id="regEmail"
+            placeholder="user@example.com"
+          />
+        </div>
+        <div class="mb-3">
+          <label for="regPassword" class="form-label">Password</label>
+          <input
+            type="password"
+            class="form-control"
+            id="regPassword"
+            placeholder="Create password"
+          />
+        </div>
+        <button type="submit" class="btn btn-danger">
+          <i class="fas fa-user-check"></i> Register
+        </button>
+        <div class="form-switch mt-3 text-center">
+          <input class="form-check-input" type="checkbox" id="toggleLogin" />
+          <label class="form-check-label" for="toggleLogin"
+            >Already have an account? Login instead</label
+          >
+        </div>
+      </form>
+    </div>
   </div>
 
   <script>
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');
+
     document.getElementById('toggleRegister').addEventListener('change', () => {
       loginForm.classList.add('d-none');
       registerForm.classList.remove('d-none');
     });
+
     document.getElementById('toggleLogin').addEventListener('change', () => {
       registerForm.classList.add('d-none');
       loginForm.classList.remove('d-none');
@@ -115,7 +261,7 @@
       const password = document.getElementById('regPassword').value;
 
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/register', {
+        const response = await fetch('https://backendcalape.rcalape.online//api/register', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -124,8 +270,8 @@
             name: username,
             email: email,
             password: password,
-            role: 2
-          })
+            role: 2,
+          }),
         });
 
         const data = await response.json();
@@ -134,7 +280,7 @@
             icon: 'success',
             title: 'Registration Successful!',
             text: 'You can now log in.',
-            confirmButtonColor: '#d33'
+            confirmButtonColor: '#d33',
           });
           document.getElementById('toggleLogin').checked = true;
           registerForm.classList.add('d-none');
@@ -144,7 +290,7 @@
             icon: 'error',
             title: 'Registration Failed',
             text: data.message || 'Please try again.',
-            confirmButtonColor: '#d33'
+            confirmButtonColor: '#d33',
           });
         }
       } catch (error) {
@@ -153,7 +299,7 @@
           icon: 'error',
           title: 'Error',
           text: 'Something went wrong during registration.',
-          confirmButtonColor: '#d33'
+          confirmButtonColor: '#d33',
         });
       }
     });
@@ -164,15 +310,13 @@
       const email = document.getElementById('loginEmail').value;
       const password = document.getElementById('loginPassword').value;
 
-
-      //https://backendcalape.rcalape.online//api/login
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/login', {
+        const response = await fetch('https://backendcalape.rcalape.online//api/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ email, password })
+          body: JSON.stringify({ email, password }),
         });
 
         const data = await response.json();
@@ -181,7 +325,7 @@
             icon: 'success',
             title: 'Login Successful!',
             timer: 1500,
-            showConfirmButton: false
+            showConfirmButton: false,
           }).then(() => {
             localStorage.setItem('auth_token', data.token);
             if (data.user.role === 0) {
@@ -197,7 +341,7 @@
             icon: 'error',
             title: 'Login Failed',
             text: data.message || 'Invalid email or password.',
-            confirmButtonColor: '#d33'
+            confirmButtonColor: '#d33',
           });
         }
       } catch (error) {
@@ -206,11 +350,12 @@
           icon: 'error',
           title: 'Error',
           text: 'Something went wrong during login.',
-          confirmButtonColor: '#d33'
+          confirmButtonColor: '#d33',
         });
       }
     });
   </script>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
