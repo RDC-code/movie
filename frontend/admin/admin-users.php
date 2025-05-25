@@ -38,10 +38,6 @@
     .sidebar {
       background-color: #1f1f1f;
       min-height: 100vh;
-      position: fixed;
-      top: 56px;
-      left: 0;
-      width: 250px;
       padding-top: 20px;
     }
     .sidebar .list-group-item {
@@ -55,7 +51,6 @@
       color: #ffffff;
     }
     .main-content {
-      margin-left: 250px;
       padding: 20px;
     }
     .table-dark {
@@ -69,6 +64,24 @@
       background-color: #1f1f1f;
       color: #ffffff;
     }
+
+    @media (min-width: 992px) {
+      .sidebar {
+        position: fixed;
+        width: 250px;
+        top: 56px;
+        left: 0;
+      }
+      .main-content {
+        margin-left: 250px;
+      }
+    }
+
+    @media (max-width: 991.98px) {
+      .sidebar {
+        display: none;
+      }
+    }
   </style>
 </head>
 <body>
@@ -76,6 +89,9 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container-fluid">
+    <button class="btn btn-outline-light d-lg-none me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+      <i class="fas fa-bars"></i>
+    </button>
     <a class="navbar-brand" href="#">Movie Management System</a>
     <div class="collapse navbar-collapse justify-content-end">
       <ul class="navbar-nav">
@@ -87,11 +103,28 @@
   </div>
 </nav>
 
+<!-- Mobile Sidebar (Offcanvas) -->
+<div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="mobileSidebar">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">Admin Menu</h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div class="list-group">
+      <a href="admin-dashboard.php" class="list-group-item list-group-item-action bg-dark text-white"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a>
+      <a href="admin-users.php" class="list-group-item list-group-item-action bg-dark text-white active"><i class="fas fa-users me-2"></i> Manage Users</a>
+      <a href="admin-movies.php" class="list-group-item list-group-item-action bg-dark text-white"><i class="fas fa-film me-2"></i> Manage Movies</a>
+      <a href="admin-reviews.php" class="list-group-item list-group-item-action bg-dark text-white"><i class="fas fa-comments me-2"></i> Movie Reviews</a>
+      <a href="admin-reports.php" class="list-group-item list-group-item-action bg-dark text-white"><i class="fas fa-chart-bar me-2"></i> Reports</a>
+    </div>
+  </div>
+</div>
+
 <!-- Layout -->
 <div class="container-fluid">
   <div class="row">
-    <!-- Sidebar -->
-    <div class="col-md-3 sidebar">
+    <!-- Sidebar (Desktop) -->
+    <div class="col-lg-3 d-none d-lg-block sidebar">
       <div class="d-flex flex-column p-3">
         <h4 class="text-center text-white mb-4">Admin Menu</h4>
         <div class="list-group">
@@ -105,7 +138,7 @@
     </div>
 
     <!-- Main Content -->
-    <div class="col-md-9 main-content">
+    <div class="col-lg-9 main-content">
       <h1>Manage Users</h1>
       <button class="btn btn-primary mb-3" onclick="openAddUserModal()"><i class="fas fa-plus"></i> Add User</button>
 

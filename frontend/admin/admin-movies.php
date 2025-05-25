@@ -90,8 +90,6 @@
     .content {
       padding: 20px;
     }
-    
-    
   </style>
 </head>
 <body>
@@ -131,7 +129,7 @@
     <div class="col-md-9 main-content">
       <h1>Manage Movies</h1>
       <div class="mb-3 d-flex justify-content-between">
-        <button class="btn btn-primary" onclick="openAddModal()">Add Movie</button>
+        <button class="btn btn-primary" onclick="openAddModal()"><i class="fas fa-plus"></i> Add Movie</button>
         <button class="btn btn-secondary" onclick="printMovies()"><i class="fas fa-print me-1"></i> Print Movie List</button>
       </div>
       <table class="table table-bordered table-dark table-striped" id="movieTable">
@@ -150,7 +148,7 @@
   </div>
 </div>
 
-<!-- Modal -->
+<!-- Movie Form Modal -->
 <div class="modal fade" id="movieModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <form id="movieForm" enctype="multipart/form-data">
@@ -181,11 +179,29 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-success">Save</button>
+          <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Save</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
         </div>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- Movie View Modal -->
+<div class="modal fade" id="viewMovieModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">View Movie</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="viewMovieContent">
+        <!-- Movie details will be injected here -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times"></i> Close</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -194,43 +210,51 @@
 <script>
   const movieTableBody = document.querySelector("#movieTable tbody");
   const movieForm = document.getElementById("movieForm");
-  const modal = new bootstrap.Modal(document.getElementById("movieModal"));
+  const movieModal = new bootstrap.Modal(document.getElementById("movieModal"));
+  const viewMovieModal = new bootstrap.Modal(document.getElementById("viewMovieModal"));
+  const viewMovieContent = document.getElementById("viewMovieContent");
 
   // Fetch all movies (GET)
   function fetchMovies() {
-  fetch("http://127.0.0.1:8000/api/movies", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json"
-    }
-  })
-  .then(res => res.json())
-  .then(movies => {
-    movieTableBody.innerHTML = "";
-    movies.forEach(movie => {
-      movieTableBody.innerHTML += `
-        <tr>
-          <td><img src="http://127.0.0.1:8000/storage/${movie.thumbnail}" width="80" /></td>
-          <td>${movie.title}</td>
-          <td>${movie.description || ''}</td>
-          <td><a href="${movie.link}" target="_blank">Visit</a></td>
-          <td>
-            <button class="btn btn-sm btn-warning" onclick='editMovie(${JSON.stringify(movie)})'>Edit</button>
-            <button class="btn btn-sm btn-danger" onclick='deleteMovie(${movie.id})'>Delete</button>
-          </td>
-        </tr>`;
+    fetch("http://127.0.0.1:8000/api/movies", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    .then(res => res.json())
+    .then(movies => {
+      movieTableBody.innerHTML = "";
+      movies.forEach(movie => {
+        movieTableBody.innerHTML += `
+          <tr>
+            <td><img src="http://127.0.0.1:8000/storage/${movie.thumbnail}" width="80" /></td>
+            <td>${movie.title}</td>
+            <td>${movie.description || ''}</td>
+            <td><a href="${movie.link}" target="_blank">Visit</a></td>
+            <td>
+              <button class="btn btn-sm btn-warning" onclick='editMovie(${JSON.stringify(movie)})'>
+                <i class="fas fa-edit"></i> Edit
+              </button>
+              <button class="btn btn-sm btn-info" onclick='viewMovie(${JSON.stringify(movie)})'>
+                <i class="fas fa-eye"></i> View
+              </button>
+              <button class="btn btn-sm btn-danger" onclick='deleteMovie(${movie.id})'>
+                <i class="fas fa-trash-alt"></i> Delete
+              </button>
+            </td>
+          </tr>`;
+      });
+    })
+    .catch(err => {
+      console.error("Error fetching movies:", err);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to load movies."
+      });
     });
-  })
-  .catch(err => {
-    console.error("Error fetching movies:", err);
-    Swal.fire({
-      icon: "error",
-      title: "Error",
-      text: "Failed to load movies."
-    });
-  });
-}
-
+  }
 
   // Open modal for adding new movie
   function openAddModal() {
@@ -238,7 +262,7 @@
     document.getElementById("movieId").value = "";
     document.getElementById("existingThumbnail").value = "";
     document.getElementById("previewImage").hidden = true;
-    modal.show();
+    movieModal.show();
   }
 
   // Fill modal with movie data for editing
@@ -251,7 +275,20 @@
     const img = document.getElementById("previewImage");
     img.src = `http://localhost:8000/storage/${movie.thumbnail}`;
     img.hidden = false;
-    modal.show();
+    movieModal.show();
+  }
+
+  // Show movie details in view modal
+  function viewMovie(movie) {
+    viewMovieContent.innerHTML = `
+      <div class="text-center mb-3">
+        <img src="http://127.0.0.1:8000/storage/${movie.thumbnail}" alt="${movie.title}" style="max-width: 300px; border-radius: 10px;"/>
+      </div>
+      <h3 class="text-center">${movie.title}</h3>
+      <p><strong>Description:</strong> ${movie.description || 'No description available.'}</p>
+      <p><strong>Link:</strong> <a href="${movie.link}" target="_blank">${movie.link}</a></p>
+    `;
+    viewMovieModal.show();
   }
 
   // Add a new movie (POST)
@@ -262,7 +299,7 @@
     })
     .then(res => res.json())
     .then(() => {
-      modal.hide();
+      movieModal.hide();
       fetchMovies();
       Swal.fire({
         icon: 'success',
@@ -282,7 +319,7 @@
     })
     .then(res => res.json())
     .then(() => {
-      modal.hide();
+      movieModal.hide();
       fetchMovies();
       Swal.fire({
         icon: 'success',
@@ -355,35 +392,36 @@
         printWindow.focus();
         printWindow.print();
         printWindow.close();
-      })
-      .catch(err => {
-        alert("Failed to fetch movies for printing.");
-        console.error(err);
       });
   }
 
-  // Preview thumbnail image on file select
+  // Preview thumbnail on file select
   document.getElementById("thumbnail").addEventListener("change", function() {
-    const preview = document.getElementById("previewImage");
     const file = this.files[0];
-    if(file) {
+    if (file) {
       const reader = new FileReader();
       reader.onload = e => {
+        const preview = document.getElementById("previewImage");
         preview.src = e.target.result;
         preview.hidden = false;
       };
       reader.readAsDataURL(file);
-    } else {
-      preview.src = "";
-      preview.hidden = true;
     }
   });
 
-  // Handle form submit (calls add or update based on presence of movieId)
+  // Handle form submit for add/edit
   movieForm.addEventListener("submit", function(e) {
     e.preventDefault();
-    const formData = new FormData(movieForm);
-    const movieId = formData.get("movieId");
+
+    const movieId = document.getElementById("movieId").value;
+    const formData = new FormData(this);
+
+    // If no new thumbnail chosen during edit, keep existing
+    if (!formData.get("thumbnail").name && document.getElementById("existingThumbnail").value) {
+      formData.delete("thumbnail");
+      formData.append("existingThumbnail", document.getElementById("existingThumbnail").value);
+    }
+
     if (movieId) {
       updateMovie(movieId, formData);
     } else {
@@ -393,7 +431,7 @@
 
   // Initial load
   fetchMovies();
-</script>
 
+</script>
 </body>
 </html>
