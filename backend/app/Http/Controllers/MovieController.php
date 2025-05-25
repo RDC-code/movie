@@ -10,7 +10,6 @@ class MovieController extends Controller
 {
     public function index()
     {
-        // Return all movies with full thumbnail URL
         $movies = Movie::all()->map(function ($movie) {
             $movie->thumbnail_url = $movie->thumbnail 
                 ? asset('storage/' . $movie->thumbnail) 
@@ -27,7 +26,7 @@ class MovieController extends Controller
             'title' => 'required|string',
             'description' => 'nullable|string',
             'link' => 'nullable|url',
-            'thumbnail' => 'nullable|mimes:jpeg,jpg,png|image|max:20480', 
+            'thumbnail' => 'nullable|image|mimes:jpeg,jpg,png|max:20480', 
         ]);
 
         if ($request->hasFile('thumbnail')) {
@@ -51,20 +50,21 @@ class MovieController extends Controller
             'title' => 'required|string',
             'description' => 'nullable|string',
             'link' => 'nullable|url',
-            'thumbnail' => 'nullable|mimes:jpeg,jpg,png|image|max:20480',
+            'thumbnail' => 'nullable|image|mimes:jpeg,jpg,png|max:20480',
             'existingThumbnail' => 'nullable|string'
         ]);
 
         if ($request->hasFile('thumbnail')) {
-            // Delete old thumbnail if exists
+            // Delete old thumbnail if it exists
             if ($movie->thumbnail) {
                 Storage::disk('public')->delete($movie->thumbnail);
             }
             $data['thumbnail'] = $request->file('thumbnail')->store('thumbnails', 'public');
-        } else {
-            // Keep existing thumbnail path if no new file uploaded
-            $data['thumbnail'] = $request->input('existingThumbnail');
+        } elseif (isset($data['existingThumbnail'])) {
+            $data['thumbnail'] = $data['existingThumbnail'];
         }
+
+        unset($data['existingThumbnail']); // Clean up unnecessary field before update
 
         $movie->update($data);
 

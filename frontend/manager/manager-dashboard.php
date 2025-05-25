@@ -117,7 +117,7 @@
       <div class="d-flex flex-column p-3">
         <h4 class="text-center text-white mb-4">Manager Menu</h4>
         <div class="list-group">
-          <a href="admin-dashboard.php" class="list-group-item list-group-item-action active">
+          <a href="manager-dashboard.php" class="list-group-item list-group-item-action active">
             <i class="fas fa-tachometer-alt me-2"></i> Dashboard
           </a>
           <a href="manager-movies.php" class="list-group-item list-group-item-action ">
@@ -156,31 +156,36 @@
           </div>
         </div>
       </div>
-    </div> <!-- End Main Content -->
+    </div> 
   </div>
 </div>
 
-<!-- Bootstrap JS -->
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Custom Script -->
+
 <script>
-  fetch("http://127.0.0.1:8000/api/public-dashboard")
-    .then(response => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      return response.json();
-    })
-    .then(data => {
-      document.getElementById("totalMovies").textContent = data.total_movies ?? 0;
-      document.getElementById("totalUsers").textContent = data.total_users ?? 0;
-    })
-    .catch(error => {
-      console.error("Fetch error:", error);
-      document.getElementById("totalMovies").textContent = "Error";
-      document.getElementById("totalUsers").textContent = "Error";
-    });
+  fetch("http://127.0.0.1:8000/api/public-dashboard", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
+  .then(function(response) {
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    return response.json();
+  })
+  .then(function(data) {
+    document.getElementById("totalMovies").textContent = data.total_movies ?? 0;
+    document.getElementById("totalUsers").textContent = data.total_users ?? 0;
+  })
+  .catch(function(error) {
+    console.error("Fetch error:", error);
+    document.getElementById("totalMovies").textContent = "Error";
+    document.getElementById("totalUsers").textContent = "Error";
+  });
 </script>
 
 </body>

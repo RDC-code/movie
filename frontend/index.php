@@ -4,9 +4,7 @@
   <meta charset="UTF-8" />
   <title>Movie Portal - Home</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <!-- Font Awesome for play icon -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
     body {
@@ -27,6 +25,10 @@
       width: 100%;
       height: 300px;
       object-fit: cover;
+      display: block;
+    }
+    .thumbnail-wrapper {
+      position: relative;
     }
     .play-btn {
       position: absolute;
@@ -35,13 +37,37 @@
       transform: translate(-50%, -50%);
       font-size: 3rem;
       color: rgba(255, 255, 255, 0.7);
+      z-index: 2;
       pointer-events: none;
     }
     .card {
-      position: relative;
       background-color: #1e1e1e;
       border: none;
       color: white;
+    }
+
+    /* MOBILE PHONE */
+    @media (max-width: 767px) {
+      .movie-thumbnail {
+        height: 200px;
+      }
+      h1.display-4 {
+        font-size: 2rem;
+      }
+      .btn-lg {
+        font-size: 1rem;
+        padding: 0.6rem 1.2rem;
+      }
+    }
+
+    /* COMPUTER */
+    @media (min-width: 992px) {
+      .movie-thumbnail {
+        height: 300px;
+      }
+      h1.display-4 {
+        font-size: 3rem;
+      }
     }
   </style>
 </head>
@@ -65,7 +91,7 @@
   </div>
 </section>
 
-<!-- Search bar -->
+<!-- Search Bar -->
 <div class="container mb-4">
   <input
     type="text"
@@ -83,28 +109,31 @@
   <div class="row g-4" id="movieContainer"></div>
 </div>
 
-
-
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
   const movieContainer = document.getElementById('movieContainer');
 
-  // Fetch movies on page load
+  // Load movies on page load
   window.onload = fetchMovies;
 
   function fetchMovies() {
-    fetch('http://localhost:8000/api/movies')
-      .then(res => {
-        if (!res.ok) throw new Error('Network response was not ok');
-        return res.json();
-      })
-      .then(data => renderMovies(data))
-      .catch(err => {
-        console.error(err);
-        movieContainer.innerHTML = `<p class="text-center text-danger">Error loading movies.</p>`;
-      });
+    fetch('http://localhost:8000/api/movies', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
+      }
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('Network response was not ok');
+      return res.json();
+    })
+    .then(data => renderMovies(data))
+    .catch(err => {
+      console.error(err);
+      movieContainer.innerHTML = `<p class="text-center text-danger">Error loading movies.</p>`;
+    });
   }
 
   function renderMovies(movies) {
@@ -118,8 +147,10 @@
       card.className = 'col-sm-6 col-md-4 col-lg-3';
       card.innerHTML = `
         <div class="card movie-card" role="button" tabindex="0">
-          <img src="http://localhost:8000/storage/${movie.thumbnail}" alt="${movie.title}" class="movie-thumbnail" />
-          <div class="play-btn"><i class="fas fa-play-circle"></i></div>
+          <div class="thumbnail-wrapper">
+            <img src="http://localhost:8000/storage/${movie.thumbnail}" alt="${movie.title}" class="movie-thumbnail" />
+            <div class="play-btn"><i class="fas fa-play-circle"></i></div>
+          </div>
           <div class="card-body">
             <h5 class="card-title">${movie.title}</h5>
             <p class="card-text">${movie.description || ''}</p>
@@ -128,7 +159,6 @@
       `;
       movieContainer.appendChild(card);
 
-      // Show alert on clicking the movie card
       card.querySelector('.movie-card').addEventListener('click', () => {
         alert('Please login first to watch movies.');
       });
@@ -137,20 +167,29 @@
 
   function searchMovies() {
     const query = document.getElementById('searchInput').value.toLowerCase().trim();
-    fetch('http://localhost:8000/api/movies')
-      .then(res => res.json())
-      .then(movies => {
-        const filtered = movies.filter(movie =>
-          movie.title.toLowerCase().includes(query) ||
-          (movie.description && movie.description.toLowerCase().includes(query))
-        );
-        renderMovies(filtered);
-      })
-      .catch(err => {
-        console.error(err);
-        movieContainer.innerHTML = `<p class="text-center text-danger">Error searching movies.</p>`;
-      });
+    fetch('http://localhost:8000/api/movies', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
+      }
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('Network response was not ok');
+      return res.json();
+    })
+    .then(movies => {
+      const filtered = movies.filter(movie =>
+        movie.title.toLowerCase().includes(query) ||
+        (movie.description && movie.description.toLowerCase().includes(query))
+      );
+      renderMovies(filtered);
+    })
+    .catch(err => {
+      console.error(err);
+      movieContainer.innerHTML = `<p class="text-center text-danger">Error searching movies.</p>`;
+    });
   }
+
 </script>
 </body>
 </html>

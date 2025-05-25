@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Manager - Manage Movies </title>
+  <title>Admin Movies - Movie Management System</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
@@ -90,6 +90,8 @@
     .content {
       padding: 20px;
     }
+    
+    
   </style>
 </head>
 <body>
@@ -116,7 +118,8 @@
       <div class="d-flex flex-column p-3">
         <h4 class="text-center text-white mb-4">Manager Menu</h4>
         <div class="list-group">
-          <a href="manager-dashboard.php" class="list-group-item list-group-item-action"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a>          <a href="manager-movies.php" class="list-group-item list-group-item-action active"><i class="fas fa-film me-2"></i> Manage Movies</a>
+          <a href="manager-dashboard.php" class="list-group-item list-group-item-action"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a>
+          <a href="manager-movies.php" class="list-group-item list-group-item-action active"><i class="fas fa-film me-2"></i> Manage Movies</a>
           <a href="manager-reviews.php" class="list-group-item list-group-item-action"><i class="fas fa-comments me-2"></i> Movie Reviews</a>
           <a href="manager-reports.php" class="list-group-item list-group-item-action"><i class="fas fa-chart-bar me-2"></i> Reports</a>
         </div>
@@ -128,7 +131,7 @@
       <h1>Manage Movies</h1>
       <div class="mb-3 d-flex justify-content-between">
         <button class="btn btn-primary" onclick="openAddModal()">Add Movie</button>
-        <button class="btn btn-secondary" onclick="printMovies()"><i class="fas fa-print me-1"></i> Print Movies</button>
+        <button class="btn btn-secondary" onclick="printMovies()"><i class="fas fa-print me-1"></i> Print Movie List</button>
       </div>
       <table class="table table-bordered table-dark table-striped" id="movieTable">
         <thead>
@@ -194,25 +197,39 @@
 
   // Fetch all movies (GET)
   function fetchMovies() {
-    fetch("http://localhost:8000/api/movies")
-      .then(res => res.json())
-      .then(movies => {
-        movieTableBody.innerHTML = "";
-        movies.forEach(movie => {
-          movieTableBody.innerHTML += `
-            <tr>
-              <td><img src="http://localhost:8000/storage/${movie.thumbnail}" width="80" /></td>
-              <td>${movie.title}</td>
-              <td>${movie.description || ''}</td>
-              <td><a href="${movie.link}" target="_blank">Visit</a></td>
-              <td>
-                <button class="btn btn-sm btn-warning" onclick='editMovie(${JSON.stringify(movie)})'>Edit</button>
-                <button class="btn btn-sm btn-danger" onclick='deleteMovie(${movie.id})'>Delete</button>
-              </td>
-            </tr>`;
-        });
-      });
-  }
+  fetch("http://127.0.0.1:8000/api/movies", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
+  .then(res => res.json())
+  .then(movies => {
+    movieTableBody.innerHTML = "";
+    movies.forEach(movie => {
+      movieTableBody.innerHTML += `
+        <tr>
+          <td><img src="http://127.0.0.1:8000/storage/${movie.thumbnail}" width="80" /></td>
+          <td>${movie.title}</td>
+          <td>${movie.description || ''}</td>
+          <td><a href="${movie.link}" target="_blank">Visit</a></td>
+          <td>
+            <button class="btn btn-sm btn-warning" onclick='editMovie(${JSON.stringify(movie)})'>Edit</button>
+            <button class="btn btn-sm btn-danger" onclick='deleteMovie(${movie.id})'>Delete</button>
+          </td>
+        </tr>`;
+    });
+  })
+  .catch(err => {
+    console.error("Error fetching movies:", err);
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "Failed to load movies."
+    });
+  });
+}
+
 
   // Open modal for adding new movie
   function openAddModal() {
@@ -304,7 +321,7 @@
         let html = `
           <html>
             <head>
-              <title>Print Movies</title>
+              <title>Print Movie List</title>
               <style>
                 body { font-family: Arial, sans-serif; padding: 20px; }
                 h2 { text-align: center; }

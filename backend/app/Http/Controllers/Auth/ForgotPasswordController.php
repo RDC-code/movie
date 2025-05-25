@@ -12,10 +12,8 @@ class ForgotPasswordController extends Controller
 {
     public function sendResetLinkEmail(Request $request)
     {
-        // Validate email
         $request->validate(['email' => 'required|email']);
 
-        // Attempt to send the password reset link to this email
         $status = Password::sendResetLink(
             $request->only('email')
         );
@@ -25,7 +23,7 @@ class ForgotPasswordController extends Controller
                 'message' => __($status)
             ], 200);
         } else {
-            // If email does not exist or other error
+        
             return response()->json([
                 'message' => __($status)
             ], 422);

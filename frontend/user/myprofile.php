@@ -12,7 +12,7 @@
   </div>
 
   <script>
-    const token = localStorage.getItem("token"); // Assume token is stored after login
+    const token = localStorage.getItem("token"); 
 
     async function fetchLoggedInUserProfile() {
       try {

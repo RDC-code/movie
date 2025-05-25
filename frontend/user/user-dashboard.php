@@ -58,22 +58,35 @@
       box-shadow: 0 8px 20px rgba(229, 9, 20, 0.6);
       z-index: 2;
     }
-    .movie-thumbnail {
-      width: 100%;
-      height: 280px;
-      border-radius: 10px 10px 0 0;
-      object-fit: cover;
-    }
-    .play-btn {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 48px;
-      color: white;
-      opacity: 0.8;
-      pointer-events: none;
-    }
+
+
+    .thumbnail-wrapper {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  overflow: hidden;
+  border-radius: 10px 10px 0 0;
+}
+
+.movie-thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 48px;
+  color: white;
+  opacity: 0.8;
+  pointer-events: none;
+  z-index: 2;
+}
+
     .card-body {
       padding: 1rem;
       flex-grow: 1;
@@ -173,17 +186,48 @@
   let selectedMovieId = null;
   let selectedRating = 0;
 
-  // Fetch movies on load
-  window.onload = fetchMovies;
+  window.onload = function () {
+    fetchMovies();
+  };
 
   function fetchMovies() {
-    fetch('http://localhost:8000/api/movies')
-      .then(res => res.json())
+    fetch("http://127.0.0.1:8000/api/movies", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(response => {
+        if (!response.ok) throw new Error("HTTP error! status: " + response.status);
+        return response.json();
+      })
       .then(data => renderMovies(data))
-      .catch(err => {
-        console.error(err);
+      .catch(error => {
+        console.error("Error fetching movies:", error);
         movieContainer.innerHTML = `<p class="text-center text-danger">Error loading movies.</p>`;
       });
+  }
+
+  function searchMovies() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    fetch("http://127.0.0.1:8000/api/movies", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then(response => {
+        if (!response.ok) throw new Error("HTTP error! status: " + response.status);
+        return response.json();
+      })
+      .then(movies => {
+        const filtered = movies.filter(movie =>
+          movie.title.toLowerCase().includes(query) ||
+          (movie.description && movie.description.toLowerCase().includes(query))
+        );
+        renderMovies(filtered);
+      })
+      .catch(error => console.error("Search error:", error));
   }
 
   function renderMovies(movies) {
@@ -197,15 +241,18 @@
       card.className = 'col-sm-6 col-md-4 col-lg-3';
       card.innerHTML = `
         <a href="${movie.link || '#'}" target="_blank" class="text-decoration-none">
-          <div class="card movie-card">
-            <img src="http://localhost:8000/storage/${movie.thumbnail}" class="movie-thumbnail" />
-            <div class="play-btn"><i class="fas fa-play-circle"></i></div>
-            <div class="card-body">
-              <h5 class="card-title">${movie.title}</h5>
-              <p class="card-text">${movie.description || ''}</p>
-              <button type="button" class="btn btn-warning rate-btn">Rate ⭐</button>
-            </div>
-          </div>
+        <div class="card movie-card">
+  <div class="thumbnail-wrapper">
+    <img src="http://localhost:8000/storage/${movie.thumbnail}" class="movie-thumbnail" />
+    <div class="play-btn"><i class="fas fa-play-circle"></i></div>
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">${movie.title}</h5>
+    <p class="card-text">${movie.description || ''}</p>
+    <button type="button" class="btn btn-warning rate-btn">Rate ⭐</button>
+  </div>
+</div>
+
         </a>
       `;
       movieContainer.appendChild(card);
@@ -221,19 +268,6 @@
     });
   }
 
-  function searchMovies() {
-    const query = document.getElementById('searchInput').value.toLowerCase();
-    fetch('http://localhost:8000/api/movies')
-      .then(res => res.json())
-      .then(movies => {
-        const filtered = movies.filter(movie =>
-          movie.title.toLowerCase().includes(query) || movie.description?.toLowerCase().includes(query)
-        );
-        renderMovies(filtered);
-      });
-  }
-
-  // Star rating
   document.querySelectorAll('#starRating i').forEach(star => {
     star.addEventListener('click', () => {
       selectedRating = parseInt(star.getAttribute('data-value'));
@@ -258,27 +292,28 @@
     document.querySelectorAll('#starRating i').forEach(star => star.classList.remove('selected'));
   }
 
-  document.getElementById('submitRatingBtn').addEventListener('click', () => {
+  document.getElementById('submitRatingBtn').addEventListener('click', function () {
     if (selectedRating === 0) {
       alert('Please select a rating.');
       return;
     }
+
     fetch(`http://localhost:8000/api/movies/${selectedMovieId}/rate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ rating: selectedRating })
     })
-    .then(res => {
-      if (!res.ok) throw new Error('Failed to submit rating');
-      return res.json();
-    })
-    .then(() => {
-      alert('Thank you for rating!');
-      rateModal.hide();
-    })
-    .catch(err => {
-      alert('Error: ' + err.message);
-    });
+      .then(response => {
+        if (!response.ok) throw new Error('Failed to submit rating: ' + response.statusText);
+        return response.json();
+      })
+      .then(() => {
+        alert('Thank you for rating!');
+        rateModal.hide();
+      })
+      .catch(error => {
+        alert('Error: ' + error.message);
+      });
   });
 </script>
 </body>
