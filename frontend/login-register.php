@@ -184,6 +184,7 @@
         <button type="submit" class="btn btn-danger">
           <i class="fas fa-sign-in-alt"></i> Login
         </button>
+        <div id="message" class="mt-2 text-center"></div>
         <div class="form-switch mt-3 text-center">
           <input class="form-check-input" type="checkbox" id="toggleRegister" />
           <label class="form-check-label" for="toggleRegister"
@@ -227,7 +228,7 @@
         <button type="submit" class="btn btn-danger">
           <i class="fas fa-user-check"></i> Register
         </button>
-        <div class="form-switch mt-3 text-center">
+         <div class="form-switch mt-3 text-center">
           <input class="form-check-input" type="checkbox" id="toggleLogin" />
           <label class="form-check-label" for="toggleLogin"
             >Already have an account? Login instead</label
@@ -304,56 +305,52 @@
       }
     });
 
-    document.querySelector('#loginForm form').addEventListener('submit', async (e) => {
-      e.preventDefault();
+  document.getElementById('loginForm').addEventListener('submit', function (e) {
+   e.preventDefault();
 
-      const email = document.getElementById('loginEmail').value;
-      const password = document.getElementById('loginPassword').value;
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    const message = document.getElementById('message');
 
-      try {
-        const response = await fetch('http://127.0.0.1:8000/api/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email, password }),
-        });
+    fetch('http://127.0.0.1:8000/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({ email: email, password: password })
+    })
+    .then(response => response.json().then(data => ({ status: response.status, ok: response.ok, body: data })))
+    .then(result => {
+      const data = result.body;
 
-        const data = await response.json();
-        if (response.ok) {
-          Swal.fire({
-            icon: 'success',
-            title: 'Login Successful!',
-            timer: 1500,
-            showConfirmButton: false,
-          }).then(() => {
-            localStorage.setItem('auth_token', data.token);
-            if (data.user.role === 0) {
-              window.location.href = 'admin/admin-dashboard.php';
-            } else if (data.user.role === 1) {
-              window.location.href = 'manager/manager-dashboard.php';
-            } else if (data.user.role === 2) {
-              window.location.href = 'user/user-dashboard.php';
-            }
-          });
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Login Failed',
-            text: data.message || 'Invalid email or password.',
-            confirmButtonColor: '#d33',
-          });
-        }
-      } catch (error) {
-        console.error(error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Something went wrong during login.',
-          confirmButtonColor: '#d33',
-        });
+      if (result.ok) {
+        localStorage.setItem('auth_token', data.token);
+        localStorage.setItem('user_role', data.role);
+
+        const role = Number(data.role);
+        message.innerHTML = `<span class="text-success">${data.message}</span>`;
+
+        setTimeout(() => {
+          if (role === 0) {
+            window.location.href = 'admin/admin-dashboard.php';
+          } else if (role === 1) {
+            window.location.href = 'manager/manager-dashboard.php';
+          } else if (role === 2) {
+            window.location.href = 'user/user-dashboard.php';
+          } else {
+            message.innerHTML = `<span class="text-danger">Unknown role: ${role}</span>`;
+          }
+        }, 1000);
+      } else {
+        message.innerHTML = `<span class="text-danger">${data.message}</span>`;
       }
+    })
+    .catch(error => {
+      message.innerHTML = `<span class="text-danger">Error: ${error.message}</span>`;
     });
+  });
+
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -99,4 +100,53 @@ public function profile(Request $request)
         'status' => $user->suspended
     ]);
 }
+
+           public function userprofile(){
+                $user = Auth::user();
+
+                return response()->json([
+                    'name' => $user->name,
+                    'email' => $user->email,
+                ]);
+
+                return response()->json($user);
+            }
+
+
+          public function updateprofile(Request $request)
+            {
+                $user = $request->user(); 
+
+                $request->validate([
+                    'name' => 'string|max:255',
+                    'email' => 'string|email|max:255',
+                ]);
+
+                $user->update($request->only(['name', 'email']));
+
+                return response()->json([
+                    'message' => 'Profile updated successfully',
+                    'user' => $user
+                ]);
+            }
+
+            public function updatePassword(Request $request)
+            {
+                $user = Auth::user();
+
+                $request->validate([
+                    'current_password' => 'required',
+                    'new_password' => 'required|string|min:3|confirmed',
+                ]);
+
+                if (!Hash::check($request->current_password, $user->password)) {
+                    return response()->json(['message' => 'Current password is incorrect'], 400);
+                }
+
+                $user->password = Hash::make($request->new_password);
+                $user->save();
+
+                return response()->json(['message' => 'Password updated successfully']);
+            }
+
 }

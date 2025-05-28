@@ -32,30 +32,32 @@ class AuthController extends Controller
         ], 201);
     }
 
-    // Login
-  public function login(Request $request)
-{
-    $request->validate([
-        'email' => 'required|email',
-        'password' => 'required',
-    ]);
+     // Login ni sija
+    public function login(Request $request)
+            {
+            try {
+                if (Auth::attempt([
+                    'email' => $request->email,
+                    'password' => $request->password,
+                ])) {
+                    $user = Auth::user();
+                    $token = $user->createToken('mytoken')->plainTextToken;
 
-    $user = User::where('email', $request->email)->first();
-
-    if (!$user || !Hash::check($request->password, $user->password)) {
-        return response()->json(['message' => 'Invalid credentials'], 401);
-    }
-
-    if ($user->suspended) {
-        return response()->json(['message' => 'This account was suspended.'], 403);
-    }
-
-    $token = $user->createToken('auth_token')->plainTextToken;
-
-    return response()->json([
-        'access_token' => $token,
-        'token_type' => 'Bearer',
-        'user' => $user
-    ]);
-}
+                    return response()->json([
+                        'message' => 'Login successful',
+                        'token' => $token,
+                        'role' => $user->role,
+                    ]);
+                } else {
+                    return response()->json([
+                        'message' => 'Invalid credentials',
+                    ], 401);
+                }
+            } catch (\Exception $e) {
+                return response()->json([
+                    'message' => 'Something went wrong during login.',
+                    'error' => $e->getMessage()
+                ], 500);
+            }
+        }
 }

@@ -64,4 +64,8 @@ Route::middleware(['auth:sanctum', 'role:1'])->group(function() {
 
 Route::middleware(['auth:sanctum', 'role:2'])->group(function() {
     Route::get('/userdashboard', [UserController::class, 'index']);
+    Route::get('/userprofile', [UserController::class, 'userprofile']);
+    Route::post('updateprofile', [UserController::class, 'updateprofile']);
+   Route::post('/updatepassword', [UserController::class, 'updatePassword']);
 });
+

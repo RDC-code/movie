@@ -119,7 +119,7 @@
   window.onload = fetchMovies;
 
   function fetchMovies() {
-    fetch('https://backendcalape.rcalape.online/api/movies', {
+    fetch('http://localhost:8000/api/movies', {
       method: 'GET',
       headers: {
         'Accept': 'application/json'
@@ -148,7 +148,7 @@
       card.innerHTML = `
         <div class="card movie-card" role="button" tabindex="0">
           <div class="thumbnail-wrapper">
-            <img src="https://backendcalape.rcalape.online/storage/${movie.thumbnail}" alt="${movie.title}" class="movie-thumbnail" />
+            <img src="http://localhost:8000/storage/${movie.thumbnail}" alt="${movie.title}" class="movie-thumbnail" />
             <div class="play-btn"><i class="fas fa-play-circle"></i></div>
           </div>
           <div class="card-body">
@@ -167,7 +167,7 @@
 
   function searchMovies() {
     const query = document.getElementById('searchInput').value.toLowerCase().trim();
-    fetch('https://backendcalape.rcalape.online/api/movies', {
+    fetch('http://localhost:8000/api/movies', {
       method: 'GET',
       headers: {
         'Accept': 'application/json'

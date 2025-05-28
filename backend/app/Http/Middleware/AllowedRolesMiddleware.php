@@ -13,25 +13,20 @@ class AllowedRolesMiddleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, ...$roles): Response
-    {
-        // Ensure user is authenticated
-        $user = $request->user();
-        if (!$user) {
-            return response()->json(['message' => 'Unauthorized! Please log in first.'], 401);
+  
+       public function handle($request, Closure $next, ...$roles): Response
+        {
+            $user = $request->user();
+        
+            if ($user->role == 0) {
+                return $next($request);
+            }
+            if ($user->role == 1) {
+                return $next($request);
+            }
+            if ($user->role == 2) {
+                return $next($request);
+            }
+            return response()->json(['message' => 'Access denied'], 403);
         }
-    
-        // If the user is an admin (role 0), let them pass
-        if ($user->role == 0) {
-            return $next($request);
-        }
-    
-        // If the user role is not in the allowed roles, deny access
-        if (!in_array($user->role, $roles)) {
-            return response()->json(['message' => 'Unauthorized! You do not have the required permissions.'], 403);
-        }
-    
-        return $next($request);
-    }
-    
 }
