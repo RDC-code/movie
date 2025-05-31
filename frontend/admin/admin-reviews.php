@@ -57,38 +57,10 @@
       margin-left: 250px;
       padding: 20px;
     }
-    h2 {
-      font-weight: bold;
-    }
-    .btn-primary {
-      background-color: #007bff;
-      border-color: #007bff;
-    }
-    .btn-primary:hover {
-      background-color: #0056b3;
-      border-color: #004085;
-    }
-    .modal-content {
-      background-color: #1f1f1f;
-      color: #ffffff;
-    }
-    .modal-header {
-      border-bottom: 1px solid #444;
-    }
-    .table-dark {
-      background-color: #2d2d2d;
-    }
-    .table-dark td,
-    .table-dark th {
-      border: 1px solid #444;
-    }
     .card {
       border: none;
       border-radius: 12px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    }
-    .content {
-      padding: 20px;
     }
   </style>
 </head>
@@ -121,7 +93,6 @@
           </a>
           <a href="admin-users.php" class="list-group-item list-group-item-action">
             <i class="fas fa-users me-2"></i> Manage Users</a>
-
           <a href="admin-movies.php" class="list-group-item list-group-item-action">
             <i class="fas fa-film me-2"></i> Manage Movies
           </a>
@@ -137,49 +108,96 @@
 
     <!-- Main Content -->
     <div class="col-md-9 main-content">
-     <h1>Movie Reviews</h1>
-
-      <!-- Review Card 1 -->
-      <div class="card mb-3">
-        <div class="card-body">
-          <h5 class="card-title"> The Dark Knight</h5>
-          <p class="card-text mb-1"><strong>Rating:</strong> ⭐⭐⭐⭐⭐</p>
-          <small class="text-muted">— by user123</small>
-          <div class="d-flex justify-content-end mt-2">
-            <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Delete</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Review Card 2 -->
-      <div class="card mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Interstellar</h5>
-          <p class="card-text mb-1"><strong>Rating:</strong> ⭐⭐⭐⭐☆</p>
-          <small class="text-muted">— by spaceFan88</small>
-          <div class="d-flex justify-content-end mt-2">
-            <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Delete</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Review Card 3 -->
-      <div class="card mb-3">
-        <div class="card-body">
-          <h5 class="card-title"> Avengers: Endgame</h5>
-          <p class="card-text mb-1"><strong>Rating:</strong> ⭐⭐⭐⭐⭐</p>
-          <small class="text-muted">— by marvelFan99</small>
-          <div class="d-flex justify-content-end mt-2">
-            <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Delete</button>
-          </div>
-        </div>
-      </div>
-
+      <h1>Movie Reviews</h1>
+      <!-- Dynamic reviews container -->
+      <div id="reviewsContainer"></div>
     </div>
   </div>
 </div>
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Review Fetching Script -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  fetchReviews();
+});
+
+function fetchReviews() {
+  fetch('http://127.0.0.1:8000/api/admin/ratings', {
+    headers: {
+      'Accept': 'application/json'
+    }
+  })
+  .then(response => {
+    if (!response.ok) throw new Error("Failed to fetch reviews.");
+    return response.json();
+  })
+  .then(data => {
+    const container = document.getElementById("reviewsContainer");
+    if (!container) {
+      console.error("reviewsContainer element not found.");
+      return;
+    }
+
+    container.innerHTML = '';
+
+    if (data.length === 0) {
+      container.innerHTML = '<p>No reviews available.</p>';
+      return;
+    }
+
+    data.forEach(review => {
+      const stars = '⭐'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+      const card = `
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="card-title">${review.movie_title}</h5>
+            <p class="card-text mb-1"><strong>Rating:</strong> ${stars}</p>
+            <small class="text-muted">— by ${review.username}</small>
+            <div class="d-flex justify-content-end mt-2">
+              <button class="btn btn-danger btn-sm" onclick="deleteReview(${review.id})">
+                <i class="fas fa-trash-alt"></i> Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      container.insertAdjacentHTML('beforeend', card);
+    });
+  })
+  .catch(error => {
+    console.error(error);
+    const container = document.getElementById("reviewsContainer");
+    if (container) {
+      container.innerHTML = '<p>Error loading reviews.</p>';
+    }
+  });
+}
+
+  function deleteReview(reviewId) {
+    if (!confirm("Are you sure you want to delete this review?")) return;
+
+    fetch(`http://localhost:8000/api/reviews/${reviewId}`, {
+      method: 'DELETE',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+        // Include authorization header if needed
+        // 'Authorization': 'Bearer YOUR_TOKEN'
+      }
+    })
+    .then(response => {
+      if (!response.ok) throw new Error("Delete failed");
+      fetchReviews(); // Reload the reviews
+    })
+    .catch(error => {
+      console.error(error);
+      alert("Failed to delete review.");
+    });
+  }
+</script>
+
 </body>
 </html>

@@ -1,13 +1,14 @@
-<?php
+    <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ManagerController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\MovieController;
-use App\Http\Controllers\ForgotPasswordController;
-use App\Http\Controllers\DashboardController;
+    use Illuminate\Http\Request;
+    use Illuminate\Support\Facades\Route;
+    use App\Http\Controllers\AuthController;
+    use App\Http\Controllers\ManagerController;
+    use App\Http\Controllers\UserController;
+    use App\Http\Controllers\MovieController;
+    use App\Http\Controllers\ForgotPasswordController;
+    use App\Http\Controllers\DashboardController;
+    use App\Http\Controllers\RatingController;
 
 //DASHBOARD
 Route::get('/public-dashboard', [DashboardController::class, 'index']);
@@ -17,17 +18,23 @@ Route::get('/public-dashboard', [DashboardController::class, 'index']);
 Route::put('/users/{id}/toggle-status', [UserController::class, 'toggleStatus']);
 
 
+//REVIEWS
+Route::post('/movies/{movie}/rate', [RatingController::class, 'store']);
+Route::delete('/reviews/{id}', [MovieController::class, 'deleteRating']);
+Route::get('/admin/ratings', [MovieController::class, 'getAllRatings']);
 
 
 
 
+
+
+
+//PROFILE
 Route::get('/profile', [UserController::class, 'profile']);
 Route::post('/update-password', [UserController::class, 'updatePassword']);
 
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink']);
 Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword']);
-
-
 
 
 
