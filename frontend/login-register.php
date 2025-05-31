@@ -12,6 +12,8 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     rel="stylesheet"
   />
+  <!-- Bootstrap 5 JS (include before your script if not yet added) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <style>
@@ -185,12 +187,16 @@
           <i class="fas fa-sign-in-alt"></i> Login
         </button>
         <div id="message" class="mt-2 text-center"></div>
+         
         <div class="form-switch mt-3 text-center">
           <input class="form-check-input" type="checkbox" id="toggleRegister" />
           <label class="form-check-label" for="toggleRegister"
             >New here? Register instead</label
           >
         </div>
+         <div class="mt-3 text-center">
+            <a href="#" onclick="openForgotModal()">Forgot password?</a>
+          </div>
       </form>
     </div>
 
@@ -238,6 +244,53 @@
     </div>
   </div>
 
+ <!-- Forgot Password Modal -->
+<div
+  class="modal fade"
+  id="forgotPasswordModal"
+  tabindex="-1"
+  aria-labelledby="forgotPasswordLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content bg-dark text-white">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="forgotPasswordLabel">Forgot Password</h5>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <input
+          type="email"
+          id="forgotEmail"
+          class="form-control bg-secondary text-white border-0"
+          placeholder="Enter your email"
+          required
+        />
+      </div>
+      <div class="modal-footer border-0">
+       <button type="button" onclick="sendForgotEmail()" class="btn btn-light">
+        Send Reset Link
+      </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+ <script>
+  function openForgotModal() {
+    const modal = new bootstrap.Modal(document.getElementById("forgotPasswordModal"));
+    modal.show();
+  }
+
+</script>
+
+
+
   <script>
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');
@@ -251,6 +304,23 @@
       registerForm.classList.add('d-none');
       loginForm.classList.remove('d-none');
     });
+
+
+
+
+     function sendForgotEmail() {
+       const email = document.getElementById('forgotEmail').value;
+
+          fetch('http://127.0.0.1:8000/api/forgot-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email })
+          })
+          .then(res => res.json())
+          .then(data => alert(data.message))
+          .catch(err => alert("Something went wrong."));
+        }
+</script>
   </script>
 
   <script>

@@ -159,7 +159,7 @@
   <div class="collapse navbar-collapse justify-content-end" id="navbarMovie">
     <ul class="navbar-nav align-items-center">
       <li class="nav-item"><a class="nav-link" href="user-dashboard.php"><i class="fas fa-film"></i> Browse</a></li>
-      <li class="nav-item"><a class="nav-link" href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+      <li class="nav-item"><a class="nav-link" href="../index.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
     </ul>
   </div>
 </nav>

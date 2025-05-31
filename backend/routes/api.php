@@ -6,7 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MovieController;
-use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\DashboardController;
 
 //DASHBOARD
@@ -19,12 +19,13 @@ Route::put('/users/{id}/toggle-status', [UserController::class, 'toggleStatus'])
 
 
 
-Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail']);
+
 
 Route::get('/profile', [UserController::class, 'profile']);
 Route::post('/update-password', [UserController::class, 'updatePassword']);
 
-
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink']);
+Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword']);
 
 
 
