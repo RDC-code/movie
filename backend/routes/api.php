@@ -15,11 +15,11 @@ Route::get('/public-dashboard', [DashboardController::class, 'index']);
 
 
 //STATUS
-Route::put('/users/{id}/toggle-status', [UserController::class, 'toggleStatus']);
+  Route::put('/users/{id}/toggle-status', [UserController::class, 'toggleStatus']);
 
 
 //REVIEWS
-Route::post('/movies/{movie}/rate', [RatingController::class, 'store']);
+   Route::post('/movies/{movie}/rate', [RatingController::class, 'store']);
 Route::delete('/reviews/{id}', [MovieController::class, 'deleteRating']);
 Route::get('/admin/ratings', [MovieController::class, 'getAllRatings']);
 
@@ -45,6 +45,9 @@ Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+
+
+
 // MOVIE API Routes
 Route::get('/movies', [MovieController::class, 'index']);
 Route::post('/movies', [MovieController::class, 'store']);
@@ -64,6 +67,7 @@ Route::delete('/movies/{id}', [MovieController::class, 'destroy']);
 // Role Middleware
 Route::middleware(['auth:sanctum', 'role:0'])->group(function() {
     Route::get('/admin', [AuthController::class, 'index']);
+ 
 });
 
 Route::middleware(['auth:sanctum', 'role:1'])->group(function() {
@@ -75,5 +79,7 @@ Route::middleware(['auth:sanctum', 'role:2'])->group(function() {
     Route::get('/userprofile', [UserController::class, 'userprofile']);
     Route::post('updateprofile', [UserController::class, 'updateprofile']);
    Route::post('/updatepassword', [UserController::class, 'updatePassword']);
+
+    
 });
 

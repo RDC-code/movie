@@ -34,30 +34,40 @@ class AuthController extends Controller
 
      // Login ni sija
     public function login(Request $request)
-            {
-            try {
-                if (Auth::attempt([
-                    'email' => $request->email,
-                    'password' => $request->password,
-                ])) {
-                    $user = Auth::user();
-                    $token = $user->createToken('mytoken')->plainTextToken;
+{
+    try {
+        if (Auth::attempt([
+            'email' => $request->email,
+            'password' => $request->password,
+        ])) {
+            $user = Auth::user();
 
-                    return response()->json([
-                        'message' => 'Login successful',
-                        'token' => $token,
-                        'role' => $user->role,
-                    ]);
-                } else {
-                    return response()->json([
-                        'message' => 'Invalid credentials',
-                    ], 401);
-                }
-            } catch (\Exception $e) {
+            // Check if suspended
+            if ($user->suspended) {
+                Auth::logout(); // Just in case
                 return response()->json([
-                    'message' => 'Something went wrong during login.',
-                    'error' => $e->getMessage()
-                ], 500);
+                    'message' => 'Your account has been suspended.',
+                ], 403);
             }
+
+            $token = $user->createToken('mytoken')->plainTextToken;
+
+            return response()->json([
+                'message' => 'Login successful',
+                'token' => $token,
+                'role' => $user->role,
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Invalid credentials',
+            ], 401);
         }
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Something went wrong during login.',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
 }
